@@ -1,163 +1,188 @@
-import type {Canvas, CanvasRenderingContext2D} from "canvas";
-import fs from "fs";
+import type {
+	Chunk,
+	ChunkInfo,
+	ChunkInterface,
+	Config,
+	ContestInterface,
+	Create,
+	ExportImageFile,
+	ExportImageString,
+	Next,
+	SnapshotInterface,
+	Step,
+	UtilsInterface,
+} from "./interfaces";
 import path from "path";
-import {createCanvas} from "canvas";
+import { Snapshot } from "./entities/snapshot";
 
-interface Config {
-	height: number;
-	width: number;
-	background?: string;
-}
-
-interface Snapshot {
-	chunks: Chunk[];
-	steps: Step[];
-}
-
-interface Step {
-	id: number;
-	position: Position;
-}
-
-interface Chunk {
-	status: ChunkStatus;
-	info: ChunkInfo;
-}
-interface ChunkStatus {
-	checked: boolean;
-}
-interface ChunkInfo {
-	size: Size;
-	position: Position;
-	fieldPosition: FieldPosition;
-}
-
-type Size = { height: number; width: number; };
-type Position = [x: number, y: number];
-type FieldPosition = { top: number; left: number; };
-
-class Contest {
+export class Contest implements ContestInterface {
 	readonly defaultConfig = {
-		background: 'rgb(60,60,60)',
-		frame: 4,
-		gap: 2,
+		backgroundColor: "rgb(30,30,50)",
+		chunk: {
+			background: `rgba(210, 210, 210, 1)`,
+			checkedBackground: `rgba(255, 50, 210, 0.3)`,
+		},
+		frame: 15,
+		gap: 5,
 		fieldsCount: {
-			height: 2,
-			width: 3,
-		}
-	}
+			height: 10,
+			width: 16,
+		},
+	};
 
-	config: Config;
-	canvas: Canvas;
+	config;
 	snapshots: Snapshot[] = [];
 
 	constructor(payload: { config: Config }) {
 		this.config = payload.config;
-		this.canvas = createCanvas(payload.config.width, payload.config.height);
 	}
 
-	readonly #chunk: {
-		getFieldSize: () => Size;
-		getFieldPosition: (position: Position) => FieldPosition;
-		createChunkInfo: (position: Position) => ChunkInfo;
-	} = {
+	readonly #chunk: ChunkInterface = {
 		getFieldSize: () => {
 			const frameSize = this.defaultConfig.frame;
 			const gapSize = this.defaultConfig.gap;
-			const height = this.config.height - frameSize * 2 - gapSize * (this.defaultConfig.fieldsCount.height - 1);
-			const width = this.config.width - frameSize * 2 - gapSize * (this.defaultConfig.fieldsCount.width - 1);
-			return {height, width};
+			const counts = this.defaultConfig.fieldsCount;
+
+			const { partsX, partsY, frameX, frameY, gapsX, gapsY } = (() => {
+				const partsX = counts.width;
+				const partsY = counts.height;
+				const frameX = frameSize * 2;
+				const frameY = frameSize * 2;
+				const gapsX = gapSize * (partsX > 1 ? partsX - 1 : 0);
+				const gapsY = gapSize * (partsY > 1 ? partsY - 1 : 0);
+				return { partsX, partsY, frameX, frameY, gapsX, gapsY };
+			})();
+
+			const height = (this.config.size.height - frameY - gapsY) / partsY;
+			const width = (this.config.size.width - frameX - gapsX) / partsX;
+
+			return { height, width };
 		},
 		getFieldPosition: ([x, y]) => {
 			const frameSize = this.defaultConfig.frame;
 			const gapSize = this.defaultConfig.gap;
 			const size = this.#chunk.getFieldSize();
-			const top = frameSize + (y - 1) * (size.height + gapSize);
-			const left = frameSize + (x - 1) * (size.width + gapSize);
-			return {top, left};
+			const top = frameSize + y * (size.height + gapSize);
+			const left = frameSize + x * (size.width + gapSize);
+			return { top, left };
 		},
 		createChunkInfo: ([x, y]) => {
 			const size = this.#chunk.getFieldSize();
 			const fieldPosition = this.#chunk.getFieldPosition([x, y]);
-			return {size, position: [x, y], fieldPosition};
+			return { size, position: [x, y], fieldPosition };
 		},
-	}
+	};
 
-	readonly #drawer: {
-		fillChunk: (position: {size: Size, position: FieldPosition}, options: { color: string; }) => void;
-	} = {
-		fillChunk: ({size: { height, width }, position: {top, left}}, {color}) => {
-			const ctx = this.canvas.getContext('2d');
-			ctx.fillStyle = color;
-			ctx.fillRect(left, top, width, height);
-		}
-	}
-
-	readonly #generateField: (size: { height?: number; width?: number }) => ChunkInfo[] = ({height = 2, width = 3}) => {
-		const backgroundColor = this.config.background || this.defaultConfig.background;
-		const totalChunks = {
-			height,
-			width,
-		}
-
-		const ctx = this.canvas.getContext('2d');
-		ctx.fillStyle = backgroundColor;
-		ctx.fillRect(0, 0, config.width, config.width);
-
-		let chunks: ChunkInfo[] = [];
-		for (let x = 0; x < totalChunks.width; x++) {
-			for (let y = 0; y < totalChunks.height; y++) {
-				const chunk = this.#chunk.createChunkInfo([x, y]);
-				this.#drawer.fillChunk({position: chunk.fieldPosition, size: chunk.size}, {color: `rgba(210, 210, 210, 1)`});
-				chunks = [...chunks, chunk];
+	readonly #snapshot: SnapshotInterface = {
+		create: ({ steps }) => {
+			const lastSnapshot = this.snapshots.at(-1);
+			if (lastSnapshot) {
+				const chunks = lastSnapshot.chunks.map((chunk) => {
+					const {
+						info: {
+							position: [chunkX, chunkY],
+						},
+					} = chunk;
+					const checked = steps.some(({ position: [stepX, stepY] }) => chunkX === stepX && chunkY === stepY);
+					return checked ? { ...chunk, status: { ...chunk.status, checked } } : chunk;
+				});
+				return new Snapshot(this, chunks, steps);
+			} else {
+				return null;
 			}
-		}
-		return chunks;
-	}
+		},
+	};
 
-	readonly create = () => {
-		const chunksInfo = this.#generateField({});
-		const snapshot: Snapshot = {
-			chunks: chunksInfo.map((info) => ({info, status: { checked: false }})),
-			steps: [],
-		}
+	readonly #utils: UtilsInterface = {
+		generateField: ({ height, width }) => {
+			const totalChunks = {
+				height,
+				width,
+			};
+
+			let chunks: ChunkInfo[] = [];
+			for (let x = 0; x < totalChunks.width; x++) {
+				for (let y = 0; y < totalChunks.height; y++) {
+					const chunk = this.#chunk.createChunkInfo([x, y]);
+					chunks = [...chunks, chunk];
+				}
+			}
+			return chunks;
+		},
+	};
+
+	readonly create: Create = () => {
+		const chunksInfo = this.#utils.generateField({
+			height: this.defaultConfig.fieldsCount.height,
+			width: this.defaultConfig.fieldsCount.width,
+		});
+		const snapshot: Snapshot = new Snapshot(
+			this,
+			chunksInfo.map((info) => ({ info, status: { checked: false } })),
+			[]
+		);
 		this.snapshots = [...this.snapshots, snapshot];
-	}
+	};
 
-	readonly next: (steps: Step[]) => void = (steps) => {
+	readonly next: Next = (steps) => {
+		type Resolved = { step: Step; chunk: Chunk }[];
+		type Rejected = Step[];
+		type FilteredSteps = { resolved: Resolved; rejected: Rejected };
+
 		const lastSnapshot = this.snapshots.at(-1);
 		if (lastSnapshot) {
-			// logic of steps => result of rejected and resolved steps
-			const filteredSteps = steps.reduce((prev, step) => prev, {resolved: [], rejected: []});
-
-			return { resolved: filteredSteps.resolved.map(({step}) => step), rejected: filteredSteps.rejected };
+			const filteredSteps = steps.reduce<FilteredSteps>(
+				(prev, step) => {
+					const chunk = lastSnapshot.chunks.find(
+						({
+							info: {
+								position: [x, y],
+							},
+						}) => x === step.position[0] && y === step.position[1]
+					);
+					if (!chunk || chunk.status.checked) return { ...prev, rejected: [...prev.rejected, step] };
+					return { ...prev, resolved: [...prev.resolved, { chunk, step }] };
+				},
+				{ resolved: [], rejected: [] }
+			);
+			const resolvedSteps = filteredSteps.resolved.map(({ step }) => step);
+			const snapshot = this.#snapshot.create({ steps: resolvedSteps });
+			if (snapshot) {
+				this.snapshots = [...this.snapshots, new Snapshot(this, snapshot.chunks, snapshot.lastSteps)];
+				return { resolved: resolvedSteps, rejected: filteredSteps.rejected };
+			}
 		}
-	}
+		return { resolved: [], rejected: steps };
+	};
 
-	readonly exportImageFile = ({
-		exportPath = path.resolve(__dirname, 'images'),
+	readonly exportImageFile: ExportImageFile = async ({
+		exportPath = path.resolve(__dirname, "images"),
 		name = String(Date.now()),
-		format = 'png'
+		format = "png",
 	}) => {
-		const out = fs.createWriteStream(path.join(exportPath, `${name}.${format}`));
-		const stream = this.canvas.createPNGStream();
-		stream.pipe(out);
-		out.on('finish', () => console.log(`The ${name}.${format} file was created.`));
-	}
+		const lastSnapshot = this.snapshots.at(-1);
+		if (lastSnapshot) await lastSnapshot.export.imageFile({ exportPath, name, format });
+	};
 
-	readonly exportImageString = () => {
-		const bufferedImage = this.canvas.toBuffer('image/png');
-		return Buffer.from(bufferedImage).toString('base64');
-	}
+	readonly exportImageString: ExportImageString = async () => {
+		const lastSnapshot = this.snapshots.at(-1);
+		if (lastSnapshot) return await lastSnapshot.export.imageString();
+		return null;
+	};
 }
 
 const config: Config = {
-	height: 200,
-	width: 400,
-}
+	size: {
+		height: 200,
+		width: 400,
+	},
+};
 
-const contest = new Contest({config});
-contest.exportImageFile({name: "demo"});
-console.log(contest.exportImageString());
-
-
+(async () => {
+	const contest = new Contest({ config });
+	contest.create();
+	await contest.exportImageFile({ name: "test" });
+	console.log(contest.next([{ id: 0, position: [2, 1] }]));
+	await contest.exportImageFile({ name: "final" });
+	console.log(await contest.exportImageString());
+})();
