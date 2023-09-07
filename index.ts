@@ -19,8 +19,8 @@ export class Contest implements ContestInterface {
 	readonly defaultConfig = {
 		backgroundColor: "rgb(30,30,50)",
 		chunk: {
-			background: `rgba(210, 210, 210, 1)`,
-			checkedBackground: `rgba(255, 50, 210, 0.3)`,
+			background: `rgb(83, 23, 206)`,
+			checkedBackground: `rgba(238, 8, 186, 0.3)`,
 		},
 		frame: 15,
 		gap: 5,
@@ -176,13 +176,36 @@ const config: Config = {
 		height: 200,
 		width: 400,
 	},
+	backgroundImage:
+		"https://besthqwallpapers.com/Uploads/14-8-2019/101424/thumb-old-paper-texture-blots-paper-backgrounds-paper-textures-old-paper.jpg",
 };
 
 (async () => {
+	const random = ({ from = 0, to = 100 }) => from + Math.floor((to - from) * Math.random());
+	const randomize = () => {
+		const sizeX = 16;
+		const sizeY = 10;
+		const count = 15;
+		const from = 5;
+		const to = from + count;
+		contest.next(
+			Array.from({ length: random({ from, to }) }).map(() => ({
+				id: random({}),
+				position: [random({ from: 0, to: sizeX - 1 }), random({ from: 0, to: sizeY - 1 })],
+			}))
+		);
+	};
+
 	const contest = new Contest({ config });
 	contest.create();
-	await contest.exportImageFile({ name: "test" });
+	await contest.exportImageFile({ name: "start" });
 	contest.next([{ id: 0, position: [2, 1] }]);
+	await contest.exportImageFile({ name: "image_1" });
+	randomize();
+	await contest.exportImageFile({ name: "image_2" });
+	randomize();
+	await contest.exportImageFile({ name: "image_3" });
+	randomize();
 	await contest.exportImageFile({ name: "final" });
 	// console.log(await contest.exportImageString());
 })();
