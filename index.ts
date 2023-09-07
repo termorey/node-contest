@@ -182,7 +182,7 @@ const config: Config = {
 	const contest = new Contest({ config });
 	contest.create();
 	await contest.exportImageFile({ name: "test" });
-	console.log(contest.next([{ id: 0, position: [2, 1] }]));
+	contest.next([{ id: 0, position: [2, 1] }]);
 	await contest.exportImageFile({ name: "final" });
-	console.log(await contest.exportImageString());
+	// console.log(await contest.exportImageString());
 })();
