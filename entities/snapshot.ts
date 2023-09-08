@@ -15,8 +15,8 @@ export class Snapshot implements SnapshotData {
 	constructor(_contest: Contest, chunks: Chunk[], lastSteps: Step[]) {
 		this._contest = _contest;
 		this.canvas = createCanvas(_contest.config.size.width, _contest.config.size.height);
-		this.chunks = chunks;
-		this.lastSteps = lastSteps;
+		this.chunks = JSON.parse(JSON.stringify(chunks));
+		this.lastSteps = JSON.parse(JSON.stringify(lastSteps));
 	}
 
 	readonly #drawer: DrawInterface = {
