@@ -1,9 +1,9 @@
-import type { Config, ContestInterface, Next, SnapshotExport, TypedContestEventTarget } from "./interfaces";
+import type { Config, ContestInterface, Next, SnapshotExport } from "./interfaces";
 import { Snapshot } from "./entities/snapshot";
 import { GameCore } from "./entities/gameCore";
 import path from "path";
 
-export class Contest extends (EventTarget as TypedContestEventTarget) implements ContestInterface {
+export class Contest implements ContestInterface {
 	readonly defaultConfig = {
 		backgroundColor: "rgb(15,15,23)",
 		chunk: {
@@ -23,7 +23,6 @@ export class Contest extends (EventTarget as TypedContestEventTarget) implements
 	game: GameCore;
 
 	constructor(payload: { config: Config }) {
-		super();
 		this.config = payload.config;
 
 		const size = {
@@ -111,5 +110,4 @@ const config: Config = {
 	randomize();
 	await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "last" });
 	console.log(await contest.export.imageString());
-	contest.addEventListener("finished", () => console.log("finished"));
 })();
