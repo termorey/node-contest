@@ -1,5 +1,4 @@
-import type { Config, ContestInterface, Create, ExportImageFile, ExportImageString, Next } from "./interfaces";
-import path from "path";
+import type { Config, ContestInterface, Create, Next } from "./interfaces";
 import { Snapshot } from "./entities/snapshot";
 import { GameCore } from "./entities/gameCore";
 
