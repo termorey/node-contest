@@ -1,6 +1,7 @@
 import type { Config, ContestInterface, Next } from "./interfaces";
 import { Snapshot } from "./entities/snapshot";
 import { GameCore } from "./entities/gameCore";
+import path from "path";
 
 export class Contest implements ContestInterface {
 	readonly defaultConfig = {
@@ -68,16 +69,22 @@ const config: Config = {
 			}))
 		);
 	};
+	const log = () => {
+		const chunks = contest.game.gameChunks;
+		const checked = chunks.filter(({ status }) => status.checked);
+		const checkedPosition = checked.map(({ info: { position } }) => position);
+		console.log(checked.length, checkedPosition);
+	};
 
 	const contest = new Contest({ config });
-	await contest.snapshots.at(-1)?.export.imageFile({ name: "start" });
+	await contest.snapshots.at(-1)?.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "start" });
 	contest.next([{ id: 0, position: [2, 1] }]);
-	await contest.snapshots.at(-1)?.export.imageFile({ name: "image_1" });
+	await contest.snapshots.at(-1)?.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "image_1" });
 	randomize();
-	await contest.snapshots.at(-1)?.export.imageFile({ name: "image_2" });
+	await contest.snapshots.at(-1)?.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "image_2" });
 	randomize();
-	await contest.snapshots.at(-1)?.export.imageFile({ name: "image_3" });
+	await contest.snapshots.at(-1)?.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "image_3" });
 	randomize();
-	await contest.snapshots.at(-1)?.export.imageFile({ name: "final" });
+	await contest.snapshots.at(-1)?.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "final" });
 	// console.log(await contest.exportImageString());
 })();
