@@ -1,4 +1,4 @@
-import type { Config, ContestInterface, Create, Next } from "./interfaces";
+import type { Config, ContestInterface, Next } from "./interfaces";
 import { Snapshot } from "./entities/snapshot";
 import { GameCore } from "./entities/gameCore";
 
@@ -28,13 +28,12 @@ export class Contest implements ContestInterface {
 			height: this.defaultConfig.fieldsCount.height,
 			width: this.defaultConfig.fieldsCount.width,
 		};
-		this.game = new GameCore(this, size, []);
-	}
+		const game = new GameCore(this, size, []);
+		this.game = game;
 
-	readonly create: Create = () => {
-		const snapshot: Snapshot = new Snapshot(this, this.game.gameChunks, []);
+		const snapshot: Snapshot = new Snapshot(this, game.gameChunks, []);
 		this.snapshots = [...this.snapshots, snapshot];
-	};
+	}
 
 	readonly next: Next = (steps) => {
 		const result = this.game.game.makeSteps({ steps });
@@ -71,7 +70,6 @@ const config: Config = {
 	};
 
 	const contest = new Contest({ config });
-	contest.create();
 	await contest.snapshots.at(-1)?.export.imageFile({ name: "start" });
 	contest.next([{ id: 0, position: [2, 1] }]);
 	await contest.snapshots.at(-1)?.export.imageFile({ name: "image_1" });
