@@ -29,7 +29,7 @@ export class Contest implements ContestInterface {
 			height: this.defaultConfig.fieldsCount.height,
 			width: this.defaultConfig.fieldsCount.width,
 		};
-		const game = new GameCore(this, size, []);
+		const game = new GameCore(this, size, config.bank);
 		this.game = game;
 
 		const snapshot: Snapshot = new Snapshot(this, game.gameChunks, []);
@@ -74,6 +74,12 @@ const config: Config = {
 		height: 200,
 		width: 400,
 	},
+	bank: [
+		{ info: { id: 0 }, count: 1 },
+		{ info: { id: 1 }, count: 2 },
+		{ info: { id: 2 }, count: 4 },
+		{ info: { id: 3 }, count: 8 },
+	],
 	onFinish: () => (finished = true),
 	// backgroundImage:
 	// 	"https://besthqwallpapers.com/Uploads/14-8-2019/101424/thumb-old-paper-texture-blots-paper-backgrounds-paper-textures-old-paper.jpg",
@@ -93,6 +99,7 @@ const config: Config = {
 				position: [random({ from: 0, to: sizeX - 1 }), random({ from: 0, to: sizeY - 1 })],
 			}))
 		);
+		console.log(contest.game.gameBank);
 	};
 	const log = () => {
 		const chunks = contest.game.gameChunks;
@@ -109,11 +116,8 @@ const config: Config = {
 	await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "image_2" });
 	randomize();
 	await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "image_3" });
-	while (!finished) {
-		randomize();
-		await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "last" });
-		await new Promise((resolve) => setTimeout(resolve, 10000));
-	}
+	randomize();
+	await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "last" });
 	console.log("finished \\m/");
 	// console.log(await contest.export.imageString());
 })();

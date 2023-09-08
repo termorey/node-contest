@@ -1,5 +1,5 @@
 import type { Canvas } from "canvas";
-import type { Chunk, DrawInterface, SnapshotExport, Step } from "../interfaces";
+import type { GameChunk, DrawInterface, SnapshotExport, Step } from "../interfaces";
 import type { Contest } from "../index";
 import path from "path";
 import fs from "fs";
@@ -9,10 +9,10 @@ import { SnapshotData } from "../interfaces";
 export class Snapshot implements SnapshotData {
 	_contest: Contest;
 	canvas: Canvas;
-	chunks: Chunk[];
+	chunks: GameChunk[];
 	lastSteps: Step[];
 
-	constructor(_contest: Contest, chunks: Chunk[], lastSteps: Step[]) {
+	constructor(_contest: Contest, chunks: GameChunk[], lastSteps: Step[]) {
 		this._contest = _contest;
 		this.canvas = createCanvas(_contest.config.size.width, _contest.config.size.height);
 		this.chunks = JSON.parse(JSON.stringify(chunks));
@@ -56,12 +56,23 @@ export class Snapshot implements SnapshotData {
 			ctx.fillRect(0, 0, this._contest.config.size.width, this._contest.config.size.height);
 		},
 		drawChunks: (chunks) => {
-			chunks.forEach(({ info: { size, fieldPosition }, status }) => {
+			chunks.forEach((chunk) => {
+				const {
+					info: { size, fieldPosition, position },
+					status,
+					prize,
+				} = chunk;
 				if (status.checked) {
 					this.#drawer.fillChunk(
 						{ size, position: fieldPosition },
 						{ color: this._contest.defaultConfig.chunk.checkedBackground }
 					);
+					if (!!prize) {
+						this.#drawer.fillChunk({ size, position: fieldPosition }, { color: "rgb(255,255,0)" });
+						this.#drawer.drawCircle(chunk, { color: "rgb(255,0,0)", width: 2 });
+					} else {
+						this.#drawer.drawXCross(chunk, { color: "rgb(255,0,0)", width: 2 });
+					}
 				} else {
 					this.#drawer.fillChunk(
 						{ size, position: fieldPosition },
@@ -70,6 +81,60 @@ export class Snapshot implements SnapshotData {
 				}
 			});
 		},
+		primitives: {
+			drawLine: ({ from, to }, { color, width }) => {
+				const ctx = this.#drawer.getContext();
+				ctx.strokeStyle = color;
+				ctx.lineWidth = width;
+				ctx.moveTo(from.x, from.y);
+				ctx.lineTo(to.x, to.y);
+				ctx.closePath();
+				ctx.stroke();
+			},
+			drawCircle: () => {},
+		},
+		drawXCross: (
+			{
+				info: {
+					size: { height, width },
+					fieldPosition: { top, left },
+				},
+			},
+			options
+		) => {
+			const center = { y: top + 0.5 * height, x: left + 0.5 * width };
+			const length = height < width ? height : width;
+			const toRad: (deg: number) => number = (deg) => (Math.PI / 180) * deg;
+			const centerOffset = 0.5 * ((0.5 * length) / Math.acos(toRad(45)));
+
+			this.#drawer.primitives.drawLine(
+				{
+					from: {
+						x: center.x - centerOffset,
+						y: center.y - centerOffset,
+					},
+					to: {
+						x: center.x + centerOffset,
+						y: center.y + centerOffset,
+					},
+				},
+				options
+			);
+			this.#drawer.primitives.drawLine(
+				{
+					from: {
+						x: center.x - centerOffset,
+						y: center.y + centerOffset,
+					},
+					to: {
+						x: center.x + centerOffset,
+						y: center.y - centerOffset,
+					},
+				},
+				options
+			);
+		},
+		drawCircle: () => {},
 		fillChunk: ({ size: { height, width }, position: { top, left } }, { color }) => {
 			const ctx = this.#drawer.getContext();
 			ctx.fillStyle = color;

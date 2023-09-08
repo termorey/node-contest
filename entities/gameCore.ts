@@ -1,8 +1,18 @@
 import type { Contest } from "../index";
-import type { ChunkInfo, GameBank, GameChunk, GameSnapshot, PrizeBank, Step } from "../interfaces";
-import { Chunk, ChunkInterface } from "../interfaces";
+import type {
+	ChunkInfo,
+	ChunkStatus,
+	GameBank,
+	GameChunk,
+	GameSnapshot,
+	Position,
+	Prize,
+	PrizeBank,
+	Step,
+	ChunkInterface,
+} from "../interfaces";
 
-type Resolved = { step: Step; updatedChunk: Chunk }[];
+type Resolved = { step: Step; updatedChunk: GameChunk }[];
 type Rejected = Step[];
 type FilteredSteps = { resolved: Resolved; rejected: Rejected };
 type MakeData = {
@@ -13,45 +23,72 @@ type MakeData = {
 export class GameCore {
 	readonly _contest: Contest;
 	readonly gameChunks: GameChunk[];
-	_gameBank: GameBank[] = [];
-	get gameBank() {
-		return this._gameBank;
-	}
-	private set gameBank(bank) {
-		this._gameBank = bank;
-	}
+	gameBank: GameBank[];
 
 	constructor(_contest: Contest, fieldSize: { height: number; width: number }, bank: PrizeBank) {
 		this._contest = _contest;
-		this.gameChunks = this.chunk
-			.generateField(fieldSize)
-			.map((info) => ({ info, status: { checked: false, available: true }, prize: null, step: null }));
-		bank.forEach(({ info, count }) => {
-			const positions = this.chunk.getPositions(count);
-			this.gameBank = [...this.gameBank, { info, positions }];
-		});
+		this.gameChunks = this.engine["regular"].generateGameField(fieldSize);
+		this.gameBank = this.engine["regular"].generateGameBank(bank);
 	}
 
+	readonly engine: {
+		[engine: string]: {
+			generateGameField: (fieldSize: { height: number; width: number }) => GameChunk[];
+			generateGameBank: (bank: PrizeBank) => GameBank[];
+			setStep: <S extends Step>(data: { step: S }) => { step: S; updatedChunk: GameChunk | null };
+		};
+	} = {
+		regular: {
+			generateGameField: (fieldSize) => {
+				const game = this;
+				const field = game.chunk.generateField(fieldSize);
+				const status: ChunkStatus = { checked: false, available: true };
+				const prize = null;
+				const step = null;
+				return field.map((info) => ({ info, status, prize, step }));
+			},
+			generateGameBank: (bank) => {
+				const game = this;
+				const condition: (chunk: GameChunk) => boolean = ({ status }) => status.available && !status.checked;
+				return bank.map(({ info, count }) => {
+					const chunks = game.chunk.getAllByCondition(condition);
+					let indexes: number[] = [];
+					while (indexes.length < count) {
+						const index = Math.round((chunks.length - 1) * Math.random());
+						if (!indexes.includes(index)) indexes = [...indexes, index];
+					}
+					const positions = indexes.map((i) => chunks[i].info.position);
+					return { info, positions, checkedSteps: [] };
+				});
+			},
+			setStep: ({ step }) => {
+				const game = this;
+				const condition: (chunk: GameChunk) => boolean = (chunk) => chunk.status.available && !chunk.step;
+				const chunk = game.chunk.find(step.position);
+				let updatedChunk = null;
+				if (!!chunk && condition(chunk)) {
+					game.chunk.updateChunkStatus(chunk.info.position, { checked: true });
+					chunk.step = step;
+					updatedChunk = chunk;
+
+					const checkBank = game.bank.checkOnPrize(chunk.info.position);
+					checkBank.forEach((bank) => {
+						game.chunk.setChunkPrize(step.position, bank.info);
+						game.bank.updateChecked(bank.info.id, step);
+					});
+				}
+				if (game.chunk.getAllByCondition(condition).length === 0)
+					game._contest.config.onFinish && game._contest.config.onFinish();
+				return { step, updatedChunk };
+			},
+		},
+	};
+
 	readonly game: {
-		setStep: <S extends Step>(data: { step: S }) => { step: S; updatedChunk: GameChunk | null };
 		makeSteps: (data: { steps: Step[] }) => MakeData;
 	} = {
-		setStep: ({ step }) => {
-			const condition: (chunk: GameChunk) => boolean = (chunk) => chunk.status.available && !chunk.step;
-			const chunk = this.chunk.find(step.position);
-			let updatedChunk = null;
-			if (!!chunk && condition(chunk)) {
-				chunk.status.available = false;
-				chunk.status.checked = true;
-				chunk.step = step;
-				updatedChunk = chunk;
-			}
-			if (this.chunk.getAllByCondition(condition).length === 0)
-				this._contest.config.onFinish && this._contest.config.onFinish();
-			return { step, updatedChunk };
-		},
 		makeSteps: ({ steps }) => {
-			const result = steps.map((step) => this.game.setStep({ step }));
+			const result = steps.map((step) => this.engine["regular"].setStep({ step }));
 			const filteredSteps = result.reduce<FilteredSteps>(
 				(prev, { step, updatedChunk }) => {
 					if (updatedChunk) return { ...prev, resolved: [...prev.resolved, { step, updatedChunk }] };
@@ -70,8 +107,28 @@ export class GameCore {
 		create: () => ({ gameChunks: this.gameChunks }),
 	};
 
+	readonly bank: {
+		findById: (id: number) => GameBank | null;
+		checkOnPrize: (position: Position) => GameBank[];
+		updateChecked: (id: number, step: Step) => void;
+	} = {
+		findById: (id) => {
+			const bank = this.gameBank.find(({ info }) => info.id === id);
+			return bank ? bank : null;
+		},
+		checkOnPrize: ([x, y]) => {
+			return this.gameBank.filter(({ positions }) => positions.some(([posX, posY]) => posX === x && posY === y));
+		},
+		updateChecked: (id, step) => {
+			const bank = this.bank.findById(id);
+			if (bank) bank.checkedSteps = [...bank.checkedSteps, step];
+		},
+	};
+
 	readonly chunk: ChunkInterface & {
 		getAllByCondition: (condition: (chunk: GameChunk) => boolean) => GameChunk[];
+		updateChunkStatus: (position: Position, status: Partial<ChunkStatus>) => void;
+		setChunkPrize: (position: Position, prize: null | Prize) => void;
 	} = {
 		getFieldSize: () => {
 			const frameSize = this._contest.defaultConfig.frame;
@@ -105,6 +162,14 @@ export class GameCore {
 			const size = this.chunk.getFieldSize();
 			const fieldPosition = this.chunk.getFieldPosition([x, y]);
 			return { size, position: [x, y], fieldPosition };
+		},
+		updateChunkStatus: (position, status) => {
+			const chunk = this.chunk.find(position);
+			if (chunk) chunk.status = { ...chunk.status, ...status };
+		},
+		setChunkPrize: (position, prize) => {
+			const chunk = this.chunk.find(position);
+			if (chunk) chunk.prize = prize;
 		},
 		generateField: ({ height, width }) => {
 			const totalChunks = {
@@ -159,7 +224,9 @@ export class GameCore {
 			);
 			return chunk ? chunk : null;
 		},
-		getAllByCondition: (condition) => this.gameChunks.filter(condition),
+		getAllByCondition: (condition) => {
+			return this.gameChunks.filter(condition);
+		},
 	};
 
 	readonly #utils = {
