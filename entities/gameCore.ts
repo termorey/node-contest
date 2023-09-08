@@ -37,14 +37,18 @@ export class GameCore {
 		makeSteps: (data: { steps: Step[] }) => MakeData;
 	} = {
 		setStep: ({ step }) => {
+			const condition: (chunk: GameChunk) => boolean = (chunk) => chunk.status.available && !chunk.step;
 			const chunk = this.chunk.find(step.position);
-			if (!!chunk?.status.available && !chunk.step) {
+			let updatedChunk = null;
+			if (!!chunk && condition(chunk)) {
 				chunk.status.available = false;
 				chunk.status.checked = true;
 				chunk.step = step;
-				return { step, updatedChunk: chunk };
+				updatedChunk = chunk;
 			}
-			return { step, updatedChunk: null };
+			if (this.chunk.getAllByCondition(condition).length === 0)
+				this._contest.config.onFinish && this._contest.config.onFinish();
+			return { step, updatedChunk };
 		},
 		makeSteps: ({ steps }) => {
 			const result = steps.map((step) => this.game.setStep({ step }));
@@ -66,7 +70,9 @@ export class GameCore {
 		create: () => ({ gameChunks: this.gameChunks }),
 	};
 
-	readonly chunk: ChunkInterface = {
+	readonly chunk: ChunkInterface & {
+		getAllByCondition: (condition: (chunk: GameChunk) => boolean) => GameChunk[];
+	} = {
 		getFieldSize: () => {
 			const frameSize = this._contest.defaultConfig.frame;
 			const gapSize = this._contest.defaultConfig.gap;
@@ -153,6 +159,7 @@ export class GameCore {
 			);
 			return chunk ? chunk : null;
 		},
+		getAllByCondition: (condition) => this.gameChunks.filter(condition),
 	};
 
 	readonly #utils = {

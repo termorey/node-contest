@@ -67,6 +67,7 @@ export interface Config {
 	size: Size;
 	backgroundColor?: string;
 	backgroundImage?: string;
+	onFinish?: () => void;
 }
 
 export interface SnapshotData {

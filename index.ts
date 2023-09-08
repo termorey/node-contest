@@ -68,17 +68,19 @@ export class Contest implements ContestInterface {
 	};
 }
 
+let finished = false;
 const config: Config = {
 	size: {
 		height: 200,
 		width: 400,
 	},
+	onFinish: () => (finished = true),
 	// backgroundImage:
 	// 	"https://besthqwallpapers.com/Uploads/14-8-2019/101424/thumb-old-paper-texture-blots-paper-backgrounds-paper-textures-old-paper.jpg",
 };
 
 (async () => {
-	const random = ({ from = 0, to = 100 }) => from + Math.floor((to - from) * Math.random());
+	const random = ({ from = 0, to = 100 }) => from + Math.round((to - from) * Math.random());
 	const randomize = () => {
 		const sizeX = 16;
 		const sizeY = 10;
@@ -107,7 +109,11 @@ const config: Config = {
 	await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "image_2" });
 	randomize();
 	await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "image_3" });
-	randomize();
-	await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "last" });
-	console.log(await contest.export.imageString());
+	while (!finished) {
+		randomize();
+		await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "last" });
+		await new Promise((resolve) => setTimeout(resolve, 2000));
+	}
+	console.log("finished \\m/");
+	// console.log(await contest.export.imageString());
 })();
