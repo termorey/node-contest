@@ -44,21 +44,6 @@ export class Contest implements ContestInterface {
 		this.snapshots = [...this.snapshots, snapshot];
 		return { resolved: resolvedSteps, rejected: result.filteredSteps.rejected };
 	};
-
-	readonly exportImageFile: ExportImageFile = async ({
-		exportPath = path.resolve(__dirname, "images"),
-		name = String(Date.now()),
-		format = "png",
-	}) => {
-		const lastSnapshot = this.snapshots.at(-1);
-		if (lastSnapshot) await lastSnapshot.export.imageFile({ exportPath, name, format });
-	};
-
-	readonly exportImageString: ExportImageString = async () => {
-		const lastSnapshot = this.snapshots.at(-1);
-		if (lastSnapshot) return await lastSnapshot.export.imageString();
-		return null;
-	};
 }
 
 const config: Config = {
@@ -88,14 +73,14 @@ const config: Config = {
 
 	const contest = new Contest({ config });
 	contest.create();
-	await contest.exportImageFile({ name: "start" });
+	await contest.snapshots.at(-1)?.export.imageFile({ name: "start" });
 	contest.next([{ id: 0, position: [2, 1] }]);
-	await contest.exportImageFile({ name: "image_1" });
+	await contest.snapshots.at(-1)?.export.imageFile({ name: "image_1" });
 	randomize();
-	await contest.exportImageFile({ name: "image_2" });
+	await contest.snapshots.at(-1)?.export.imageFile({ name: "image_2" });
 	randomize();
-	await contest.exportImageFile({ name: "image_3" });
+	await contest.snapshots.at(-1)?.export.imageFile({ name: "image_3" });
 	randomize();
-	await contest.exportImageFile({ name: "final" });
+	await contest.snapshots.at(-1)?.export.imageFile({ name: "final" });
 	// console.log(await contest.exportImageString());
 })();
