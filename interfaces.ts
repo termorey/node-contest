@@ -19,6 +19,25 @@ export interface ContestInterface {
 	config: Config;
 	snapshots: Snapshot[];
 }
+
+interface ContestEventTarget extends EventTarget {
+	addEventListener<K extends keyof ContestEventMap>(
+		type: K,
+		listener: (ev: ContestEventMap[K]) => void,
+		options?: boolean | AddEventListenerOptions
+	): void;
+	addEventListener(
+		type: string,
+		callback: EventListenerOrEventListenerObject | null,
+		options?: EventListenerOptions | boolean
+	): void;
+}
+interface ContestEventMap {
+	finished: CustomEvent<void>;
+}
+export type TypedEventTarget<Target extends EventTarget> = { new (): Target; prototype: Target };
+export type TypedContestEventTarget = TypedEventTarget<ContestEventTarget>;
+
 export interface ChunkInterface {
 	checkPositionsEqual: (chunk_first: Chunk, chunk_second: Chunk) => boolean;
 	createChunkInfo: (position: Position) => ChunkInfo;
@@ -28,9 +47,6 @@ export interface ChunkInterface {
 	getFieldSize: () => Size;
 	getPositions: (count: number, onlyFree?: boolean) => Position[];
 }
-export interface SnapshotInterface {
-	create: (data: { steps: Step[] }) => Snapshot | null;
-}
 export interface DrawInterface {
 	getContext: () => CanvasRenderingContext2D;
 	drawBackgroundImage: (link: string) => Promise<void>;
@@ -39,10 +55,13 @@ export interface DrawInterface {
 	drawChunks: (chunks: Chunk[]) => void;
 	fillChunk: (position: { size: Size; position: FieldPosition }, options: { color: string }) => void;
 }
-export type Create = () => void;
 export type Next = (steps: Step[]) => { resolved: Step[]; rejected: Step[] };
 export type ExportImageFile = (options: { exportPath?: string; name?: string; format?: string }) => Promise<void>;
 export type ExportImageString = () => Promise<string | null>;
+export interface SnapshotExport {
+	imageFile: ExportImageFile;
+	imageString: ExportImageString;
+}
 
 export interface Config {
 	size: Size;

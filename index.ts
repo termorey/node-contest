@@ -1,9 +1,9 @@
-import type { Config, ContestInterface, Next } from "./interfaces";
+import type { Config, ContestInterface, Next, SnapshotExport, TypedContestEventTarget } from "./interfaces";
 import { Snapshot } from "./entities/snapshot";
 import { GameCore } from "./entities/gameCore";
 import path from "path";
 
-export class Contest implements ContestInterface {
+export class Contest extends (EventTarget as TypedContestEventTarget) implements ContestInterface {
 	readonly defaultConfig = {
 		backgroundColor: "rgb(15,15,23)",
 		chunk: {
@@ -23,6 +23,7 @@ export class Contest implements ContestInterface {
 	game: GameCore;
 
 	constructor(payload: { config: Config }) {
+		super();
 		this.config = payload.config;
 
 		const size = {
@@ -42,6 +43,29 @@ export class Contest implements ContestInterface {
 		const snapshot = new Snapshot(this, result.gameSnapshot.gameChunks, resolvedSteps);
 		this.snapshots = [...this.snapshots, snapshot];
 		return { resolved: resolvedSteps, rejected: result.filteredSteps.rejected };
+	};
+
+	readonly export: SnapshotExport & {} = {
+		imageFile: (...args) =>
+			new Promise(async (resolve, reject) => {
+				const snapshot = this.snapshots.at(-1);
+				if (!snapshot) return resolve();
+				try {
+					resolve(await snapshot.export.imageFile(...args));
+				} catch (e) {
+					reject(e);
+				}
+			}),
+		imageString: (...args) =>
+			new Promise(async (resolve, reject) => {
+				const snapshot = this.snapshots.at(-1);
+				if (!snapshot) return resolve(null);
+				try {
+					resolve(await snapshot.export.imageString(...args));
+				} catch (e) {
+					reject(e);
+				}
+			}),
 	};
 }
 
@@ -77,14 +101,15 @@ const config: Config = {
 	};
 
 	const contest = new Contest({ config });
-	await contest.snapshots.at(-1)?.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "start" });
+	await contest.snapshots.at(-1)?.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "first" });
 	contest.next([{ id: 0, position: [2, 1] }]);
-	await contest.snapshots.at(-1)?.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "image_1" });
+	await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "image_1" });
 	randomize();
-	await contest.snapshots.at(-1)?.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "image_2" });
+	await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "image_2" });
 	randomize();
-	await contest.snapshots.at(-1)?.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "image_3" });
+	await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "image_3" });
 	randomize();
-	await contest.snapshots.at(-1)?.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "final" });
-	// console.log(await contest.exportImageString());
+	await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "last" });
+	console.log(await contest.export.imageString());
+	contest.addEventListener("finished", () => console.log("finished"));
 })();

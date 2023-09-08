@@ -1,5 +1,5 @@
 import type { Canvas } from "canvas";
-import type { Chunk, DrawInterface, ExportImageFile, ExportImageString, Step } from "../interfaces";
+import type { Chunk, DrawInterface, SnapshotExport, Step } from "../interfaces";
 import type { Contest } from "../index";
 import path from "path";
 import fs from "fs";
@@ -77,10 +77,7 @@ export class Snapshot implements SnapshotData {
 		},
 	};
 
-	readonly export: {
-		imageFile: ExportImageFile;
-		imageString: ExportImageString;
-	} = {
+	readonly export: SnapshotExport = {
 		imageFile: async ({
 			exportPath = path.resolve(__dirname, "images"),
 			name = String(Date.now()),
