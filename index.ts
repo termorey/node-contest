@@ -112,7 +112,7 @@ const config: Config = {
 	while (!finished) {
 		randomize();
 		await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "last" });
-		await new Promise((resolve) => setTimeout(resolve, 2000));
+		await new Promise((resolve) => setTimeout(resolve, 10000));
 	}
 	console.log("finished \\m/");
 	// console.log(await contest.export.imageString());
