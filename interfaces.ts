@@ -20,9 +20,13 @@ export interface ContestInterface {
 	snapshots: Snapshot[];
 }
 export interface ChunkInterface {
-	getFieldSize: () => Size;
-	getFieldPosition: (position: Position) => FieldPosition;
+	checkPositionsEqual: (chunk_first: Chunk, chunk_second: Chunk) => boolean;
 	createChunkInfo: (position: Position) => ChunkInfo;
+	find: (position: Position) => GameChunk | null;
+	generateField: (size: { height: number; width: number }) => ChunkInfo[];
+	getFieldPosition: (position: Position) => FieldPosition;
+	getFieldSize: () => Size;
+	getPositions: (count: number, onlyFree?: boolean) => Position[];
 }
 export interface SnapshotInterface {
 	create: (data: { steps: Step[] }) => Snapshot | null;
@@ -34,9 +38,6 @@ export interface DrawInterface {
 	clearField: () => void;
 	drawChunks: (chunks: Chunk[]) => void;
 	fillChunk: (position: { size: Size; position: FieldPosition }, options: { color: string }) => void;
-}
-export interface UtilsInterface {
-	generateField: (size: { height: number; width: number }) => ChunkInfo[];
 }
 export type Create = () => void;
 export type Next = (steps: Step[]) => { resolved: Step[]; rejected: Step[] };
@@ -54,8 +55,29 @@ export interface SnapshotData {
 	lastSteps: Step[];
 }
 
-export interface Step {
+export interface Prize {
 	id: number;
+}
+
+export type PrizeBank = { info: Prize; count: number }[];
+
+export interface GameChunk extends Chunk {
+	prize: null | Prize;
+	step: null | Step;
+}
+export interface GameBank {
+	info: Prize;
+	positions: Position[];
+}
+
+export interface GameSnapshot {
+	gameChunks: GameChunk[];
+}
+
+export interface Step {
+	/** Уникальный идентификатор (игрока или действия) */
+	id: number;
+	/** позиция на которую делается ход */
 	position: Position;
 }
 
@@ -64,14 +86,20 @@ export interface Chunk {
 	info: ChunkInfo;
 }
 interface ChunkStatus {
+	/** Вскрыт ли чанк */
 	checked: boolean;
+	/** Доступен ли для хода */
+	available: boolean;
 }
 export interface ChunkInfo {
+	/** Размер (координаты) */
 	size: Size;
+	/** Позиция среди чанков */
 	position: Position;
+	/** Позиция на поле (кординаты) */
 	fieldPosition: FieldPosition;
 }
 
 type Size = { height: number; width: number };
-type Position = [x: number, y: number];
+export type Position = [x: number, y: number];
 type FieldPosition = { top: number; left: number };
