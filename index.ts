@@ -1,12 +1,13 @@
-import type { Config } from "./interfaces";
+import type { Config, Step } from "shared/interfaces";
 import path from "path";
-import { Contest } from "./entities/contest";
+import { Contest } from "entities/contest";
+import { ContestEvent } from "shared/enums";
 
 let finished = false;
 const config: Config = {
 	size: {
-		height: 200,
-		width: 400,
+		height: 600,
+		width: 900,
 	},
 	bank: [
 		{ info: { id: 0 }, count: 1 },
@@ -20,6 +21,7 @@ const config: Config = {
 };
 
 (async () => {
+	// Utils
 	const random = ({ from = 0, to = 100 }) => from + Math.round((to - from) * Math.random());
 	const randomize = () => {
 		const sizeX = 16;
@@ -27,12 +29,19 @@ const config: Config = {
 		const count = 15;
 		const from = 5;
 		const to = from + count;
-		contest.next(
-			Array.from({ length: random({ from, to }) }).map(() => ({
-				id: random({}),
-				position: [random({ from: 0, to: sizeX - 1 }), random({ from: 0, to: sizeY - 1 })],
-			}))
-		);
+		const steps: Step[] = Array.from({ length: random({ from, to }) }).map(() => ({
+			id: playersId[random({ to: playersId.length - 1 })],
+			position: [random({ from: 0, to: sizeX - 1 }), random({ from: 0, to: sizeY - 1 })],
+		}));
+		const filteredSteps: Step[] = steps.filter(({ id }, i, array) => {
+			const firstIndex = array.findIndex((p) => p.id === id);
+			return firstIndex >= 0 && firstIndex === i;
+		});
+		const mapId: (arr: typeof steps) => number[] = (arr) => arr.map(({ id }) => id);
+		console.log(`Total steps: ${filteredSteps.length} from ${steps.length}`);
+		console.log("steps", mapId(steps));
+		console.log("→ filtered to", mapId(filteredSteps));
+		contest.next(filteredSteps);
 	};
 	const log = () => {
 		const chunks = contest.game.gameChunks;
@@ -41,16 +50,27 @@ const config: Config = {
 		console.log(checked.length, checkedPosition);
 	};
 
+	// Test config
+	const testConfig = {
+		players: 15,
+		imagesDirectory: path.join(__dirname, "images"),
+	};
+
+	// Usage
+	const playersId = Array.from({ length: random({ to: testConfig.players }) })
+		.fill(null)
+		.map((_, i) => i + 1);
 	const contest = new Contest({ config });
-	await contest.snapshots.at(-1)?.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "first" });
+	contest.addEventListener(ContestEvent.finished, () => console.log("finished"));
+	await contest.snapshots.at(-1)?.export.imageFile({ exportPath: testConfig.imagesDirectory, name: "first" });
 	contest.next([{ id: 0, position: [2, 1] }]);
-	await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "image_1" });
+	await contest.export.imageFile({ exportPath: testConfig.imagesDirectory, name: "image_1" });
 	randomize();
-	await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "image_2" });
+	await contest.export.imageFile({ exportPath: testConfig.imagesDirectory, name: "image_2" });
 	randomize();
-	await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "image_3" });
+	await contest.export.imageFile({ exportPath: testConfig.imagesDirectory, name: "image_3" });
 	randomize();
-	await contest.export.imageFile({ exportPath: path.join(__dirname, "images"), name: "last" });
+	await contest.export.imageFile({ exportPath: testConfig.imagesDirectory, name: "last" });
 	console.log("finished \\m/");
 	// console.log(await contest.export.imageString());
 })();
