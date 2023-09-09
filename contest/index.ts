@@ -1,7 +1,7 @@
-import type { Config, Step } from "shared/interfaces";
+import type { Config, Step } from "contest/src/shared/interfaces";
 import path from "path";
-import { Contest } from "entities/contest";
-import { ContestEvent } from "shared/enums";
+import { Contest } from "contest/src/entities/contest";
+import { ContestEvent } from "contest/src/shared/enums";
 
 let finished = false;
 const config: Config = {
