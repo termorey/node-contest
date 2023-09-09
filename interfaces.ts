@@ -58,8 +58,8 @@ export interface DrawInterface {
 			data: { from: { x: number; y: number }; to: { x: number; y: number } },
 			options: { color: string; width: number }
 		) => void;
-		drawCircle: (
-			data: { from: { x: number; y: number }; to: { x: number; y: number } },
+		drawArc: (
+			data: { center: { x: number; y: number }; radius: number; length: number },
 			options: { color: string; width: number; fill?: boolean }
 		) => void;
 	};

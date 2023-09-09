@@ -58,10 +58,11 @@ export class Snapshot implements SnapshotData {
 		drawChunks: (chunks) => {
 			chunks.forEach((chunk) => {
 				const {
-					info: { size, fieldPosition, position },
+					info: { size, fieldPosition },
 					status,
 					prize,
 				} = chunk;
+
 				if (status.checked) {
 					this.#drawer.fillChunk(
 						{ size, position: fieldPosition },
@@ -91,7 +92,16 @@ export class Snapshot implements SnapshotData {
 				ctx.closePath();
 				ctx.stroke();
 			},
-			drawCircle: () => {},
+			drawArc: ({ center: { x, y }, radius, length }, { color, width, fill }) => {
+				const ctx = this.#drawer.getContext();
+				ctx.strokeStyle = color;
+				ctx.lineWidth = width;
+				ctx.beginPath();
+				ctx.arc(x, y, radius, 0, length);
+				ctx.closePath();
+				ctx.stroke();
+				if (fill) ctx.fill();
+			},
 		},
 		drawXCross: (
 			{
@@ -134,7 +144,28 @@ export class Snapshot implements SnapshotData {
 				options
 			);
 		},
-		drawCircle: () => {},
+		drawCircle: (
+			{
+				info: {
+					size: { height, width },
+					fieldPosition: { top, left },
+				},
+			},
+			options
+		) => {
+			const center = { y: top + 0.5 * height, x: left + 0.5 * width };
+			const diameter = height < width ? height : width;
+			const radius = 0.8 * 0.5 * diameter;
+
+			this.#drawer.primitives.drawArc(
+				{
+					center,
+					radius,
+					length: 2 * Math.PI,
+				},
+				options
+			);
+		},
 		fillChunk: ({ size: { height, width }, position: { top, left } }, { color }) => {
 			const ctx = this.#drawer.getContext();
 			ctx.fillStyle = color;
