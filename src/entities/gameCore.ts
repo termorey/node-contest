@@ -1,4 +1,4 @@
-import type { Contest } from "./contest";
+import type { Contest } from "entities/contest";
 import type {
 	ChunkInfo,
 	ChunkStatus,
@@ -10,7 +10,8 @@ import type {
 	PrizeBank,
 	Step,
 	ChunkInterface,
-} from "../interfaces";
+} from "shared/interfaces";
+import { ContestEvent } from "shared/enums";
 
 type Resolved = { step: Step; updatedChunk: GameChunk }[];
 type Rejected = Step[];
@@ -79,6 +80,11 @@ export class GameCore {
 				}
 				if (game.chunk.getAllByCondition(condition).length === 0)
 					game._contest.config.onFinish && game._contest.config.onFinish();
+
+				const stats = this.bank.getStats();
+				if (stats.count.total - stats.count.checked === 0)
+					this._contest.dispatchEvent(new CustomEvent(ContestEvent.finished));
+
 				return { step, updatedChunk };
 			},
 		},
@@ -111,6 +117,7 @@ export class GameCore {
 		findById: (id: number) => GameBank | null;
 		checkOnPrize: (position: Position) => GameBank[];
 		updateChecked: (id: number, step: Step) => void;
+		getStats: () => { count: { total: number; checked: number } };
 	} = {
 		findById: (id) => {
 			const bank = this.gameBank.find(({ info }) => info.id === id);
@@ -122,6 +129,13 @@ export class GameCore {
 		updateChecked: (id, step) => {
 			const bank = this.bank.findById(id);
 			if (bank) bank.checkedSteps = [...bank.checkedSteps, step];
+		},
+		getStats: () => {
+			const total = this.gameBank.map(({ positions }) => positions.length).reduce((prev, curr) => prev + curr, 0);
+			const checked = this.gameBank
+				.map(({ positions, checkedSteps }) => positions.length - checkedSteps.length)
+				.reduce((prev, curr) => prev + curr, 0);
+			return { count: { total, checked } };
 		},
 	};
 
