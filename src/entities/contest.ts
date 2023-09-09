@@ -1,8 +1,8 @@
-import type { Config, ContestInterface, Next, SnapshotExport } from "../interfaces";
-import { Snapshot } from "./snapshot";
-import { GameCore } from "./gameCore";
+import type { Config, ContestInterface, Next, SnapshotExport, TypedContestEventTarget } from "shared/interfaces";
+import { Snapshot } from "entities/snapshot";
+import { GameCore } from "entities/gameCore";
 
-export class Contest implements ContestInterface {
+export class Contest extends (EventTarget as TypedContestEventTarget) implements ContestInterface {
 	readonly defaultConfig = {
 		backgroundColor: "rgb(15,15,23)",
 		chunk: {
@@ -22,6 +22,7 @@ export class Contest implements ContestInterface {
 	game: GameCore;
 
 	constructor(payload: { config: Config }) {
+		super();
 		this.config = payload.config;
 
 		const size = {
