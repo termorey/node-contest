@@ -1,6 +1,6 @@
 import type { Canvas } from "canvas";
 import type { GameChunk, DrawInterface, SnapshotExport, Step } from "../interfaces";
-import type { Contest } from "../index";
+import type { Contest } from "./contest";
 import path from "path";
 import fs from "fs";
 import { createCanvas, Image } from "canvas";

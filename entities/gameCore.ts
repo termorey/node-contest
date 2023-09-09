@@ -1,4 +1,4 @@
-import type { Contest } from "../index";
+import type { Contest } from "./contest";
 import type {
 	ChunkInfo,
 	ChunkStatus,
