@@ -1,10 +1,10 @@
 import type { Canvas } from "canvas";
-import type { GameChunk, DrawInterface, SnapshotExport, Step } from "../interfaces";
-import type { Contest } from "./contest";
+import type { GameChunk, DrawInterface, SnapshotExport, Step } from "shared/interfaces";
+import type { Contest } from "entities/contest";
 import path from "path";
 import fs from "fs";
 import { createCanvas, Image } from "canvas";
-import { SnapshotData } from "../interfaces";
+import { SnapshotData } from "shared/interfaces";
 
 export class Snapshot implements SnapshotData {
 	_contest: Contest;
