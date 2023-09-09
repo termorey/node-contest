@@ -8,10 +8,11 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "baseUrl": "src"
   },
   "include": [
-    "images"
+    "src"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "images"]
 }
