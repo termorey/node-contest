@@ -1,5 +1,6 @@
 import { CanvasRenderingContext2D } from "canvas";
-import type { Snapshot } from "./entities/snapshot";
+import type { Snapshot } from "entities/snapshot";
+import { ContestEvent } from "shared/enums";
 
 export interface ContestInterface {
 	defaultConfig: {
@@ -33,7 +34,8 @@ interface ContestEventTarget extends EventTarget {
 	): void;
 }
 interface ContestEventMap {
-	finished: CustomEvent<void>;
+	[ContestEvent.created]: CustomEvent<void>;
+	[ContestEvent.finished]: CustomEvent<void>;
 }
 export type TypedEventTarget<Target extends EventTarget> = { new (): Target; prototype: Target };
 export type TypedContestEventTarget = TypedEventTarget<ContestEventTarget>;
