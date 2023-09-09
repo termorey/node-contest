@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npm run build",
-    "build": "ts-node index.ts",
+    "build": "ts-node -r tsconfig-paths/register index.ts",
     "ts": "ts-node",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,6 +16,7 @@
     "@types/node": "^20.5.9",
     "prettier": "^3.0.3",
     "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.2.2"
   },
   "dependencies": {
