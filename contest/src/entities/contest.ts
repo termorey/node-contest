@@ -1,6 +1,6 @@
-import type { Config, ContestInterface, Next, SnapshotExport, TypedContestEventTarget } from "shared/interfaces";
-import { Snapshot } from "entities/snapshot";
-import { GameCore } from "entities/gameCore";
+import type { Config, ContestInterface, Next, SnapshotExport, TypedContestEventTarget } from "../shared/interfaces";
+import { Snapshot } from "./snapshot";
+import { GameCore } from "./gameCore";
 
 export class Contest extends (EventTarget as TypedContestEventTarget) implements ContestInterface {
 	readonly defaultConfig = {
@@ -17,7 +17,7 @@ export class Contest extends (EventTarget as TypedContestEventTarget) implements
 		},
 	};
 
-	config;
+	config: Config;
 	snapshots: Snapshot[] = [];
 	game: GameCore;
 
@@ -26,8 +26,8 @@ export class Contest extends (EventTarget as TypedContestEventTarget) implements
 		this.config = payload.config;
 
 		const size = {
-			height: this.defaultConfig.fieldsCount.height,
-			width: this.defaultConfig.fieldsCount.width,
+			height: this.config.fieldsCount.height || this.defaultConfig.fieldsCount.height,
+			width: this.config.fieldsCount.width || this.defaultConfig.fieldsCount.width,
 		};
 		const game = new GameCore(this, size, payload.config.bank);
 		this.game = game;

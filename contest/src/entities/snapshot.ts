@@ -1,10 +1,10 @@
 import type { Canvas } from "canvas";
-import type { GameChunk, DrawInterface, SnapshotExport, Step } from "shared/interfaces";
-import type { Contest } from "entities/contest";
+import type { GameChunk, DrawInterface, SnapshotExport, Step } from "../shared/interfaces";
+import type { Contest } from "./contest";
 import path from "path";
 import fs from "fs";
 import { createCanvas, Image } from "canvas";
-import { SnapshotData } from "shared/interfaces";
+import { SnapshotData } from "../shared/interfaces";
 
 export class Snapshot implements SnapshotData {
 	_contest: Contest;
@@ -14,36 +14,36 @@ export class Snapshot implements SnapshotData {
 
 	constructor(_contest: Contest, chunks: GameChunk[], lastSteps: Step[]) {
 		this._contest = _contest;
-		this.canvas = createCanvas(_contest.config.size.width, _contest.config.size.height);
+		this.canvas = createCanvas(_contest.config.fieldSize.width, _contest.config.fieldSize.height);
 		this.chunks = JSON.parse(JSON.stringify(chunks));
 		this.lastSteps = JSON.parse(JSON.stringify(lastSteps));
 	}
 
-	readonly #drawer: DrawInterface = {
+	readonly drawer: DrawInterface = {
 		getContext: () => this.canvas.getContext("2d"),
 		redraw: async () => {
 			// clearing
-			this.#drawer.clearField();
+			this.drawer.clearField();
 
 			// before async
 			const draw = () => {
-				this.#drawer.drawChunks(this.chunks);
+				this.drawer.drawChunks(this.chunks);
 			};
 			draw();
 
 			// async
 			if (this._contest.config.backgroundImage)
-				await this.#drawer.drawBackgroundImage(this._contest.config.backgroundImage);
+				await this.drawer.drawBackgroundImage(this._contest.config.backgroundImage);
 
 			// after async
 			draw();
 		},
 		drawBackgroundImage: async (link) =>
 			new Promise((resolve) => {
-				const ctx = this.#drawer.getContext();
+				const ctx = this.drawer.getContext();
 				const image = new Image();
 				image.onload = () => {
-					ctx.drawImage(image, 0, 0, this._contest.config.size.width, this._contest.config.size.height);
+					ctx.drawImage(image, 0, 0, this._contest.config.fieldSize.width, this._contest.config.fieldSize.height);
 					resolve();
 				};
 				image.src = link;
@@ -51,9 +51,9 @@ export class Snapshot implements SnapshotData {
 		clearField: () => {
 			const backgroundColor = this._contest.config.backgroundColor || this._contest.defaultConfig.backgroundColor;
 
-			const ctx = this.#drawer.getContext();
+			const ctx = this.drawer.getContext();
 			ctx.fillStyle = backgroundColor;
-			ctx.fillRect(0, 0, this._contest.config.size.width, this._contest.config.size.height);
+			ctx.fillRect(0, 0, this._contest.config.fieldSize.width, this._contest.config.fieldSize.height);
 		},
 		drawChunks: (chunks) => {
 			chunks.forEach((chunk) => {
@@ -64,18 +64,18 @@ export class Snapshot implements SnapshotData {
 				} = chunk;
 
 				if (status.checked) {
-					this.#drawer.fillChunk(
+					this.drawer.fillChunk(
 						{ size, position: fieldPosition },
 						{ color: this._contest.defaultConfig.chunk.checkedBackground }
 					);
 					if (!!prize) {
-						this.#drawer.fillChunk({ size, position: fieldPosition }, { color: "rgb(255,255,0)" });
-						this.#drawer.drawCircle(chunk, { color: "rgb(255,0,0)", width: 2 });
+						this.drawer.fillChunk({ size, position: fieldPosition }, { color: "rgb(255,255,0)" });
+						this.drawer.drawCircle(chunk, { color: "rgb(255,0,0)", width: 2 });
 					} else {
-						this.#drawer.drawXCross(chunk, { color: "rgb(255,0,0)", width: 2 });
+						this.drawer.drawXCross(chunk, { color: "rgb(255,0,0)", width: 2 });
 					}
 				} else {
-					this.#drawer.fillChunk(
+					this.drawer.fillChunk(
 						{ size, position: fieldPosition },
 						{ color: this._contest.defaultConfig.chunk.background }
 					);
@@ -84,7 +84,7 @@ export class Snapshot implements SnapshotData {
 		},
 		primitives: {
 			drawLine: ({ from, to }, { color, width }) => {
-				const ctx = this.#drawer.getContext();
+				const ctx = this.drawer.getContext();
 				ctx.strokeStyle = color;
 				ctx.lineWidth = width;
 				ctx.moveTo(from.x, from.y);
@@ -93,7 +93,7 @@ export class Snapshot implements SnapshotData {
 				ctx.stroke();
 			},
 			drawArc: ({ center: { x, y }, radius, length }, { color, width, fill }) => {
-				const ctx = this.#drawer.getContext();
+				const ctx = this.drawer.getContext();
 				ctx.strokeStyle = color;
 				ctx.lineWidth = width;
 				ctx.beginPath();
@@ -117,7 +117,7 @@ export class Snapshot implements SnapshotData {
 			const toRad: (deg: number) => number = (deg) => (Math.PI / 180) * deg;
 			const centerOffset = 0.5 * ((0.5 * length) / Math.acos(toRad(45)));
 
-			this.#drawer.primitives.drawLine(
+			this.drawer.primitives.drawLine(
 				{
 					from: {
 						x: center.x - centerOffset,
@@ -130,7 +130,7 @@ export class Snapshot implements SnapshotData {
 				},
 				options
 			);
-			this.#drawer.primitives.drawLine(
+			this.drawer.primitives.drawLine(
 				{
 					from: {
 						x: center.x - centerOffset,
@@ -157,7 +157,7 @@ export class Snapshot implements SnapshotData {
 			const diameter = height < width ? height : width;
 			const radius = 0.8 * 0.5 * diameter;
 
-			this.#drawer.primitives.drawArc(
+			this.drawer.primitives.drawArc(
 				{
 					center,
 					radius,
@@ -167,7 +167,7 @@ export class Snapshot implements SnapshotData {
 			);
 		},
 		fillChunk: ({ size: { height, width }, position: { top, left } }, { color }) => {
-			const ctx = this.#drawer.getContext();
+			const ctx = this.drawer.getContext();
 			ctx.fillStyle = color;
 			ctx.fillRect(left, top, width, height);
 		},
@@ -179,7 +179,7 @@ export class Snapshot implements SnapshotData {
 			name = String(Date.now()),
 			format = "png",
 		}) => {
-			await this.#drawer.redraw();
+			await this.drawer.redraw();
 			const checkPath: (path: string) => boolean = (path) => fs.existsSync(path);
 			if (!checkPath(exportPath)) fs.mkdirSync(exportPath);
 			const out = fs.createWriteStream(path.join(exportPath, `${name}.${format}`));
@@ -188,7 +188,7 @@ export class Snapshot implements SnapshotData {
 			out.on("finish", () => console.log(`The ${name}.${format} file was created.`));
 		},
 		imageString: async () => {
-			await this.#drawer.redraw();
+			await this.drawer.redraw();
 			const bufferedImage = this.canvas.toBuffer("image/png");
 			return Buffer.from(bufferedImage).toString("base64");
 		},

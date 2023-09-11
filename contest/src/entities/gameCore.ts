@@ -1,4 +1,4 @@
-import type { Contest } from "entities/contest";
+import type { Contest } from "./contest";
 import type {
 	ChunkInfo,
 	ChunkStatus,
@@ -10,13 +10,13 @@ import type {
 	PrizeBank,
 	Step,
 	ChunkInterface,
-} from "shared/interfaces";
-import { ContestEvent } from "shared/enums";
+} from "../shared/interfaces";
+import { ContestEvent } from "../shared/enums";
 
 type Resolved = { step: Step; updatedChunk: GameChunk }[];
 type Rejected = Step[];
 type FilteredSteps = { resolved: Resolved; rejected: Rejected };
-type MakeData = {
+export type MakeData = {
 	filteredSteps: FilteredSteps;
 	gameSnapshot: GameSnapshot;
 };
@@ -36,6 +36,7 @@ export class GameCore {
 		[engine: string]: {
 			generateGameField: (fieldSize: { height: number; width: number }) => GameChunk[];
 			generateGameBank: (bank: PrizeBank) => GameBank[];
+			isGameFinished: () => boolean;
 			setStep: <S extends Step>(data: { step: S }) => { step: S; updatedChunk: GameChunk | null };
 		};
 	} = {
@@ -62,6 +63,10 @@ export class GameCore {
 					return { info, positions, checkedSteps: [] };
 				});
 			},
+			isGameFinished: () => {
+				const stats = this.bank.getStats();
+				return stats.count.total - stats.count.checked === 0;
+			},
 			setStep: ({ step }) => {
 				const game = this;
 				const condition: (chunk: GameChunk) => boolean = (chunk) => chunk.status.available && !chunk.step;
@@ -81,8 +86,7 @@ export class GameCore {
 				if (game.chunk.getAllByCondition(condition).length === 0)
 					game._contest.config.onFinish && game._contest.config.onFinish();
 
-				const stats = this.bank.getStats();
-				if (stats.count.total - stats.count.checked === 0)
+				if (this.engine["regular"].isGameFinished())
 					this._contest.dispatchEvent(new CustomEvent(ContestEvent.finished));
 
 				return { step, updatedChunk };
@@ -103,7 +107,9 @@ export class GameCore {
 				{ resolved: [], rejected: [] }
 			);
 			const gameSnapshot = this.snapshot.create();
-			return { filteredSteps, gameSnapshot };
+			const stepsData = { filteredSteps, gameSnapshot };
+			this._contest.dispatchEvent(new CustomEvent(ContestEvent.steps, { detail: stepsData }));
+			return stepsData;
 		},
 	};
 
@@ -117,7 +123,14 @@ export class GameCore {
 		findById: (id: number) => GameBank | null;
 		checkOnPrize: (position: Position) => GameBank[];
 		updateChecked: (id: number, step: Step) => void;
-		getStats: () => { count: { total: number; checked: number } };
+		getStats: () => {
+			count: {
+				// число всех призов
+				total: number;
+				// число открытых
+				checked: number;
+			};
+		};
 	} = {
 		findById: (id) => {
 			const bank = this.gameBank.find(({ info }) => info.id === id);
@@ -133,7 +146,7 @@ export class GameCore {
 		getStats: () => {
 			const total = this.gameBank.map(({ positions }) => positions.length).reduce((prev, curr) => prev + curr, 0);
 			const checked = this.gameBank
-				.map(({ positions, checkedSteps }) => positions.length - checkedSteps.length)
+				.map(({ checkedSteps }) => checkedSteps.length)
 				.reduce((prev, curr) => prev + curr, 0);
 			return { count: { total, checked } };
 		},
@@ -147,7 +160,7 @@ export class GameCore {
 		getFieldSize: () => {
 			const frameSize = this._contest.defaultConfig.frame;
 			const gapSize = this._contest.defaultConfig.gap;
-			const counts = this._contest.defaultConfig.fieldsCount;
+			const counts = this._contest.config.fieldsCount || this._contest.defaultConfig.fieldsCount;
 
 			const { partsX, partsY, frameX, frameY, gapsX, gapsY } = (() => {
 				const partsX = counts.width;
@@ -159,8 +172,8 @@ export class GameCore {
 				return { partsX, partsY, frameX, frameY, gapsX, gapsY };
 			})();
 
-			const height = (this._contest.config.size.height - frameY - gapsY) / partsY;
-			const width = (this._contest.config.size.width - frameX - gapsX) / partsX;
+			const height = (this._contest.config.fieldSize.height - frameY - gapsY) / partsY;
+			const width = (this._contest.config.fieldSize.width - frameX - gapsX) / partsX;
 
 			return { height, width };
 		},
@@ -218,7 +231,7 @@ export class GameCore {
 			const chunks = onlyFree ? this.gameChunks.filter((c) => c.status.checked) : this.gameChunks;
 			let selectedChunks: GameChunk[] = [];
 			return Array.from({ length: count > chunks.length ? chunks.length : count }).map(() => {
-				const index = this.#utils.getRandomInteger({ from: 0, to: chunks.length - 1 });
+				const index = this.utils.getRandomInteger({ from: 0, to: chunks.length - 1 });
 				let chunk = chunks[index];
 
 				while (selectedChunks.some((c) => this.chunk.checkPositionsEqual(c, chunk))) {
@@ -243,7 +256,7 @@ export class GameCore {
 		},
 	};
 
-	readonly #utils = {
+	readonly utils = {
 		getRandomInteger: ({ from = 0, to = 100 }) => from + Math.floor((to - from) * Math.random()),
 	};
 }

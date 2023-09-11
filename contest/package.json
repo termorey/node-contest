@@ -1,8 +1,8 @@
 {
-  "name": "canvas",
-  "version": "0.1.0",
+  "name": "contest",
+  "version": "0.2.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node -r tsconfig-paths/register index.ts",
     "build": "tsc",

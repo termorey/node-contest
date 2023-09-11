@@ -1,6 +1,7 @@
 import { CanvasRenderingContext2D } from "canvas";
-import type { Snapshot } from "entities/snapshot";
-import { ContestEvent } from "shared/enums";
+import type { Snapshot } from "../entities/snapshot";
+import { ContestEvent } from "./enums";
+import { MakeData } from "../entities/gameCore";
 
 export interface ContestInterface {
 	defaultConfig: {
@@ -35,6 +36,7 @@ interface ContestEventTarget extends EventTarget {
 }
 interface ContestEventMap {
 	[ContestEvent.created]: CustomEvent<void>;
+	[ContestEvent.steps]: CustomEvent<MakeData>;
 	[ContestEvent.finished]: CustomEvent<void>;
 }
 export type TypedEventTarget<Target extends EventTarget> = { new (): Target; prototype: Target };
@@ -78,7 +80,8 @@ export interface SnapshotExport {
 }
 
 export interface Config {
-	size: Size;
+	fieldSize: Size;
+	fieldsCount: Size;
 	bank: PrizeBank;
 	backgroundColor?: string;
 	backgroundImage?: string;
@@ -118,7 +121,7 @@ export interface GameSnapshot {
 
 export interface Step {
 	/** Уникальный идентификатор (игрока или действия) */
-	id: number;
+	id: string;
 	/** позиция на которую делается ход */
 	position: Position;
 }
