@@ -1,6 +1,10 @@
 {
   "name": "@termorey/node-contest",
   "version": "0.3.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "Instance for creation Contest events",
   "main": "dist/index.js",
   "scripts": {
