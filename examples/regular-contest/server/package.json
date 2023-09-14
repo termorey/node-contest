@@ -10,6 +10,7 @@
     "dev": "nodemon src/index.ts"
   },
   "dependencies": {
+    "@termorey/node-contest": "^0.3.2",
     "cors": "^2.8.5",
     "effector": "^22.8.6",
     "express": "^4.18.2",
