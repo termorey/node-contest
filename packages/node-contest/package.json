@@ -1,6 +1,6 @@
 {
   "name": "@termorey/node-contest",
-  "version": "0.3.0",
+  "version": "0.3.2",
   "private": false,
   "publishConfig": {
     "access": "public"
