@@ -1,11 +1,10 @@
+import type { Step } from "@termorey/node-contest";
 import express from "express";
 import { $contests } from "../services/contests";
 import { io } from "../index";
 import { SocketEvent } from "../socket/events";
 import { createContestInfo, createContestShortInfo } from "./contest";
-import * as console from "console";
 import { $stepsQueue, addContestStepFx, clearContestStepsQueue } from "../services/steps";
-import { Step } from "contest";
 
 export const stepsRouter = express.Router();
 
