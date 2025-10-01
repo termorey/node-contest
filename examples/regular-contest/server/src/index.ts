@@ -15,10 +15,10 @@ const server = createServer(app);
 
 // Socket
 export const io = new Server(server, {
-	cors: {
-		origin: true,
-		credentials: true,
-	},
+  cors: {
+    origin: true,
+    credentials: true,
+  },
 });
 
 // CORS
@@ -30,15 +30,15 @@ app.use("/api", router);
 
 // Handlers
 io.on("connection", (socket) => {
-	console.log("Connected:", socket.id);
+  console.log("Connected:", socket.id);
 
-	socket.on("disconnect", () => console.log("disconnected"));
+  socket.on("disconnect", () => console.log("disconnected"));
 });
 server.on("error", (err) => {
-	console.error("Server not started", err);
+  console.error("Server not started", err);
 });
 
 // Start server
 server.listen(port, () => {
-	console.log(`Server started on *:${port}`);
+  console.log(`Server started on *:${port}`);
 });

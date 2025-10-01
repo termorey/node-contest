@@ -1,5 +1,5 @@
 export enum ContestEvent {
-	created = "created",
-	steps = "steps",
-	finished = "finished",
+  created = "created",
+  steps = "steps",
+  finished = "finished",
 }

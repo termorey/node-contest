@@ -6,33 +6,33 @@ import { ContestPage } from "pages/contest.tsx";
 import { CreationPage } from "pages/creation.tsx";
 
 const routes: RouteObject[] = [
-	{
-		path: '/',
-		element: <App/>,
-		children: [
-			{
-				index: true,
-				path: "",
-				element: <IndexPage/>,
-			},
-			{
-				path: "contests",
-				element: <ContestsPage/>,
-			},
-			{
-				path: "contests/new",
-				element: <CreationPage/>,
-			},
-			{
-				path: "contests/:contestId",
-				element: <ContestPage/>,
-			},
-			{
-				path: "*",
-				element: <IndexPage/>
-			}
-		]
-	}
-]
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        index: true,
+        path: "",
+        element: <IndexPage />,
+      },
+      {
+        path: "contests",
+        element: <ContestsPage />,
+      },
+      {
+        path: "contests/new",
+        element: <CreationPage />,
+      },
+      {
+        path: "contests/:contestId",
+        element: <ContestPage />,
+      },
+      {
+        path: "*",
+        element: <IndexPage />,
+      },
+    ],
+  },
+];
 
 export const router = createBrowserRouter(routes);
