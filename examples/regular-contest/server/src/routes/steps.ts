@@ -1,16 +1,18 @@
-import type { Step } from "packages/node-contest/src/main";
-import express from "express";
-import { $contests } from "../services/contests";
-import { io } from "../index";
-import { SocketEvent } from "../socket/events";
+import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
+import { z } from "zod";
+import type { Step } from "@termorey/node-contest";
+import { $contests } from "@/services/contests";
+import { io } from "@/socket/socket.ts";
+import { SocketEvent } from "@/socket/events";
 import { createContestInfo, createContestShortInfo } from "./contest";
 import {
   $stepsQueue,
   addContestStepFx,
   clearContestStepsQueue,
-} from "../services/steps";
+} from "@/services/steps";
 
-export const stepsRouter = express.Router();
+export const stepsRouter = new Hono();
 
 const createStepAnswer: <T extends boolean>(result: T) => { result: T } = (
   result,
@@ -21,52 +23,63 @@ const filterSteps: (steps: Step[]) => Step[] = (steps) =>
     return firstIndex >= 0 && firstIndex === i;
   });
 
-stepsRouter.post("/make", async (req, res) => {
-  if (!req.body) return res.status(200).send(createStepAnswer(false));
-  const body = req.body as NextStep;
-  await addContestStepFx(body);
-  return res.status(200).send(createStepAnswer(true));
-});
-stepsRouter.post("/apply", async (req, res) => {
-  if (!req.body) return res.status(200).send(createStepAnswer(false));
-  const body = req.body as { contestId: string };
-  const contestId = body.contestId;
-  const contestsList = $contests.getState().list;
-  const contest = contestsList.find(({ id }) => id === contestId);
-  if (!contest) return res.status(200).send(createStepAnswer(false));
-  if (contest.status.finished)
-    return res.status(200).send(createStepAnswer(false));
-  const stepsList = $stepsQueue.getState();
-  const steps = stepsList
-    .filter((step) => step.contestId === contestId)
-    .map(({ step }) => step);
-  // (!important) users duplicated steps must be filtered (one user = one step for one apply)
-  const filteredSteps = filterSteps(steps);
-  const { resolved, rejected } = contest.contest.next(filteredSteps);
-  await clearContestStepsQueue(contestId);
-  const contestInfo = await createContestInfo(contest);
-  const contestShortInfo = await createContestShortInfo(contest);
-  io.emit(SocketEvent.contestSteps, contestInfo);
-  io.emit(SocketEvent.contestUpdated, contestShortInfo);
-  if (resolved.length > 0) return res.status(200).send(createStepAnswer(true));
-  return res.status(200).send(createStepAnswer(true));
-});
-stepsRouter.post("/make-and-apply", async (req, res) => {
-  if (!req.body) return res.status(200).send(createStepAnswer(false));
-  const body = req.body as NextStep;
-  const contestsList = $contests.getState().list;
-  const contest = contestsList.find(({ id }) => body.contestId === id);
-  if (!contest) return res.status(200).send(createStepAnswer(false));
-  if (contest.status.finished)
-    return res.status(200).send(createStepAnswer(false));
-  const { resolved, rejected } = contest.contest.next([body.step]);
-  const contestInfo = await createContestInfo(contest);
-  const contestShortInfo = await createContestShortInfo(contest);
-  io.emit(SocketEvent.contestSteps, contestInfo);
-  io.emit(SocketEvent.contestUpdated, contestShortInfo);
-  if (resolved.length > 0) return res.status(200).send(createStepAnswer(true));
-  return res.status(200).send(createStepAnswer(true));
-});
+stepsRouter.post(
+  "/make",
+  zValidator("json", z.custom<NextStep>().optional()),
+  async (ctx) => {
+    const body = ctx.req.valid("json");
+    if (!body) return ctx.json(createStepAnswer(false), 200);
+    await addContestStepFx(body);
+    return ctx.json(createStepAnswer(true), 200);
+  },
+);
+stepsRouter.post(
+  "/apply",
+  zValidator("json", z.object({ contestId: z.string() }).optional()),
+  async (ctx) => {
+    const body = ctx.req.valid("json");
+    if (!body) return ctx.json(createStepAnswer(false), 200);
+    const contestId = body.contestId;
+    const contestsList = $contests.getState().list;
+    const contest = contestsList.find(({ id }) => id === contestId);
+    if (!contest) return ctx.json(createStepAnswer(false), 200);
+    if (contest.status.finished) return ctx.json(createStepAnswer(false), 200);
+    const stepsList = $stepsQueue.getState();
+    const steps = stepsList
+      .filter((step) => step.contestId === contestId)
+      .map(({ step }) => step);
+    // (!important) users duplicated steps must be filtered (one user = one step for one apply)
+    const filteredSteps = filterSteps(steps);
+    const { resolved, rejected: _rejected } =
+      contest.contest.next(filteredSteps);
+    await clearContestStepsQueue(contestId);
+    const contestInfo = await createContestInfo(contest);
+    const contestShortInfo = await createContestShortInfo(contest);
+    io.emit(SocketEvent.contestSteps, contestInfo);
+    io.emit(SocketEvent.contestUpdated, contestShortInfo);
+    if (resolved.length > 0) return ctx.json(createStepAnswer(true), 200);
+    return ctx.json(createStepAnswer(true), 200);
+  },
+);
+stepsRouter.post(
+  "/make-and-apply",
+  zValidator("json", z.custom<NextStep>().optional()),
+  async (ctx) => {
+    const body = ctx.req.valid("json");
+    if (!body) return ctx.json(createStepAnswer(false), 200);
+    const contestsList = $contests.getState().list;
+    const contest = contestsList.find(({ id }) => body.contestId === id);
+    if (!contest) return ctx.json(createStepAnswer(false), 200);
+    if (contest.status.finished) return ctx.json(createStepAnswer(false), 200);
+    const { resolved, rejected: _rejected } = contest.contest.next([body.step]);
+    const contestInfo = await createContestInfo(contest);
+    const contestShortInfo = await createContestShortInfo(contest);
+    io.emit(SocketEvent.contestSteps, contestInfo);
+    io.emit(SocketEvent.contestUpdated, contestShortInfo);
+    if (resolved.length > 0) return ctx.json(createStepAnswer(true), 200);
+    return ctx.json(createStepAnswer(true), 200);
+  },
+);
 
 type NextStep = {
   contestId: string;

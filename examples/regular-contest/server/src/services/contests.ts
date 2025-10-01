@@ -1,5 +1,3 @@
-import type { Config, PrizeBank } from "packages/node-contest/src/main";
-import { Contest, ContestEvent } from "packages/node-contest/src/main";
 import { v4 as uuid } from "uuid";
 import {
   createApi,
@@ -8,7 +6,12 @@ import {
   createStore,
   sample,
 } from "effector";
-import * as console from "console";
+import {
+  type Config,
+  type PrizeBank,
+  Contest,
+  ContestEvent,
+} from "@termorey/node-contest";
 
 export interface ContestObj {
   id: string;

@@ -1,9 +1,11 @@
-import express from "express";
-import { $contests, ContestObj, createContestFx } from "../services/contests";
-import { io } from "../index";
-import { SocketEvent } from "../socket/events";
+import { Hono } from "hono";
+import { z } from "zod";
+import { zValidator } from "@hono/zod-validator";
+import { $contests, ContestObj, createContestFx } from "@/services/contests";
+import { io } from "@/socket/socket.ts";
+import { SocketEvent } from "@/socket/events";
 
-export const contestRouter = express.Router();
+export const contestRouter = new Hono();
 
 export type ContestShortInfo = { id: string; img: Image };
 export type ContestInfo = {
@@ -48,54 +50,78 @@ export const createContestInfo: (
   };
 };
 
-contestRouter.get("", async (_, res) => {
+contestRouter.get("/", async (ctx) => {
   const list = $contests.getState().list;
   let contests: any[] = [];
   for (const contestObj of list) {
     const contest = await createContestShortInfo(contestObj);
     contests = [...contests, contest];
   }
-  res.status(200).send(contests);
+  return ctx.json(contests, 200);
 });
-contestRouter.post("/create", async (req, res) => {
-  const prizes = [
-    { id: 0, name: "7D", totalCount: 1 },
-    { id: 1, name: "5D", totalCount: 2 },
-    { id: 2, name: "3D", totalCount: 4 },
-    { id: 3, name: "1D", totalCount: 8 },
-  ];
+contestRouter.post(
+  "/create",
+  zValidator(
+    "json",
+    z.object({
+      fieldSize: z.object({ height: z.number(), width: z.number() }).optional(),
+      fieldsCount: z
+        .object({ height: z.number(), width: z.number() })
+        .optional(),
+    }),
+  ),
+  async (ctx) => {
+    const body = ctx.req.valid("json");
 
-  const config = {
-    fieldSize: req.body.fieldSize || {
-      height: 600,
-      width: 900,
-    },
-    fieldsCount: req.body.fieldsCount || {
-      height: 10,
-      width: 16,
-    },
-  };
+    const prizes = [
+      { id: 0, name: "7D", totalCount: 1 },
+      { id: 1, name: "5D", totalCount: 2 },
+      { id: 2, name: "3D", totalCount: 4 },
+      { id: 3, name: "1D", totalCount: 8 },
+    ];
 
-  const { id } = await createContestFx({ config, prizes });
-  const responseData = { id };
-  console.log(`Created contest id:${id}`);
-  res.status(200).send(responseData);
-  io.emit(SocketEvent.contestCreated, responseData);
-});
-contestRouter.get("/id/:id", async (req, res) => {
-  const list = $contests.getState().list;
-  const contest = list.find(({ id }) => req.params.id === id);
-  if (!contest) return res.status(200).send(null);
-  const contestInfo = await createContestInfo(contest);
-  res.status(200).send(contestInfo);
-});
-contestRouter.get("/by-id/:id", async (req, res) => {
-  const list = $contests.getState().list;
-  const filteredList = list.filter(({ id }) => req.params.id === id);
-  let contests: any[] = [];
-  for (const contestObj of filteredList) {
-    const contest = await createContestShortInfo(contestObj);
-    contests = [...contests, contest];
-  }
-  res.status(200).send(contests);
-});
+    const config = {
+      fieldSize: body.fieldSize || {
+        height: 600,
+        width: 900,
+      },
+      fieldsCount: body.fieldsCount || {
+        height: 10,
+        width: 16,
+      },
+    };
+
+    const { id } = await createContestFx({ config, prizes });
+    const responseData = { id };
+    console.log(`Created contest id:${id}`);
+    io.emit(SocketEvent.contestCreated, responseData);
+    return ctx.json(responseData, 200);
+  },
+);
+contestRouter.get(
+  "/id/:id",
+  zValidator("param", z.object({ id: z.string() })),
+  async (ctx) => {
+    const params = ctx.req.valid("param");
+    const list = $contests.getState().list;
+    const contest = list.find(({ id }) => params.id === id);
+    if (!contest) return ctx.json(null, 200);
+    const contestInfo = await createContestInfo(contest);
+    return ctx.json(contestInfo, 200);
+  },
+);
+contestRouter.get(
+  "/by-id/:id",
+  zValidator("param", z.object({ id: z.string() })),
+  async (ctx) => {
+    const params = ctx.req.valid("param");
+    const list = $contests.getState().list;
+    const filteredList = list.filter(({ id }) => params.id === id);
+    let contests: any[] = [];
+    for (const contestObj of filteredList) {
+      const contest = await createContestShortInfo(contestObj);
+      contests = [...contests, contest];
+    }
+    return ctx.json(contests, 200);
+  },
+);

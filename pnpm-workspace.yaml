@@ -6,3 +6,4 @@ catalog:
   prettier: 3.6.2
   typescript: 5.9.3
   vite: ^7.1.7
+  zod: ^4.1.11
