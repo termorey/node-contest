@@ -19,7 +19,7 @@ const config: Config = {
     { info: { id: 2 }, count: 4 },
     { info: { id: 3 }, count: 8 },
   ],
-  onFinish: () => (finished = true),
+  onFinish: () => finished,
   // backgroundImage:
   // 	"https://besthqwallpapers.com/Uploads/14-8-2019/101424/thumb-old-paper-texture-blots-paper-backgrounds-paper-textures-old-paper.jpg",
 };
@@ -99,6 +99,7 @@ const config: Config = {
     exportPath: testConfig.imagesDirectory,
     name: "last",
   });
+  log();
   console.log("finished \\m/");
   // console.log(await contest.export.imageString());
 })();
