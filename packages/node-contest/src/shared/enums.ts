@@ -1,5 +1,5 @@
-export enum ContestEvent {
-  created = "created",
-  steps = "steps",
-  finished = "finished",
-}
+export const ContestEvent = {
+  created: "created",
+  steps: "steps",
+  finished: "finished",
+} as const;
