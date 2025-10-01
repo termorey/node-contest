@@ -21,7 +21,7 @@
     "prettier": "^3.0.3",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.2.2"
+    "typescript": "catalog:"
   },
   "dependencies": {
     "canvas": "^2.11.2"
