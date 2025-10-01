@@ -18,7 +18,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.5.9",
-    "prettier": "^3.0.3",
+    "prettier": "catalog:",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "catalog:"
