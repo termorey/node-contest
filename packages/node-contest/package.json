@@ -38,11 +38,12 @@
     "url": "https://github.com/termorey/node-contest/issues"
   },
   "homepage": "https://github.com/termorey/node-contest#readme",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
+  "files": ["./dist"],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./dist/export.d.ts",
+      "import": "./dist/index.mjs"
     }
   }
 }
