@@ -9,8 +9,8 @@ importers:
   examples/regular-contest/server:
     dependencies:
       '@termorey/node-contest':
-        specifier: ^0.3.2
-        version: 0.3.2
+        specifier: workspace:*
+        version: link:../../../packages/node-contest
       cors:
         specifier: ^2.8.5
         version: 2.8.5
@@ -450,9 +450,6 @@ packages:
 
   '@swc/types@0.1.25':
     resolution: {integrity: sha512-iAoY/qRhNH8a/hBvm3zKj9qQ4oc2+3w1unPJa2XvTK3XjeLXtzcCingVPw/9e5mn1+0yPqxcBGp9Jf0pkfMb1g==}
-
-  '@termorey/node-contest@0.3.2':
-    resolution: {integrity: sha512-IeUdL5QPcFZWONoamRyTaiSKxsGzfhAWcyV43OXyPq05PkfEcp34W7OtjwOqobli1W6uOnAiV5LSybrLI9rcCg==}
 
   '@tsconfig/node10@1.0.9':
     resolution: {integrity: sha512-jNsYVVxU8v5g43Erja32laIDHXeoNvFEpX33OK4d6hljo3jDhCBDhx5dhCCTMWUojscpAagGiRkBKxpdl9fxqA==}
@@ -2346,13 +2343,6 @@ snapshots:
   '@swc/types@0.1.25':
     dependencies:
       '@swc/counter': 0.1.3
-
-  '@termorey/node-contest@0.3.2':
-    dependencies:
-      canvas: 2.11.2
-    transitivePeerDependencies:
-      - encoding
-      - supports-color
 
   '@tsconfig/node10@1.0.9': {}
 
