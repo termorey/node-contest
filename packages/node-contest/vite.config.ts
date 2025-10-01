@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import * as path from "node:path";
 import { defineConfig } from "vite";
 import dtsPlugin from "vite-plugin-dts";
@@ -13,5 +14,8 @@ export default defineConfig({
     rollupOptions: {
       external: [/^node:/],
     },
+  },
+  test: {
+    projects: ["src/**/*.{test}.{ts,tsx}"],
   },
 });
