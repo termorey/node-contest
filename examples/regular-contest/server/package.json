@@ -7,7 +7,9 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "typecheck": "tsc --noEmit --project tsconfig.json",
+    "format:apply": "prettier **/*.{ts,tsx,js,jsx} --write"
   },
   "dependencies": {
     "@termorey/node-contest": "workspace:*",
