@@ -2,7 +2,7 @@
   "name": "@termorey/node-contest",
   "version": "0.3.2",
   "private": false,
-  "types": "module",
+  "type": "module",
   "publishConfig": {
     "access": "public"
   },
@@ -40,6 +40,7 @@
   "homepage": "https://github.com/termorey/node-contest#readme",
   "main": "./dist/index.js",
   "files": ["./dist"],
+  "types": "./dist/export.d.ts",
   "exports": {
     ".": {
       "types": "./dist/export.d.ts",
