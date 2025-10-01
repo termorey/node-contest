@@ -1,7 +1,7 @@
-import type { Config, Step } from "./src";
-import * as path from "path";
-import { Contest } from "./src";
-import { ContestEvent } from "./src";
+import * as path from "node:path";
+import type { Config, Step } from "./export.ts";
+import { Contest } from "./export.ts";
+import { ContestEvent } from "./export.ts";
 
 let finished = false;
 const config: Config = {
@@ -75,12 +75,10 @@ const config: Config = {
   contest.addEventListener(ContestEvent.finished, () =>
     console.log("finished"),
   );
-  await contest.snapshots
-    .at(-1)
-    ?.export.imageFile({
-      exportPath: testConfig.imagesDirectory,
-      name: "first",
-    });
+  await contest.snapshots.at(-1)?.export.imageFile({
+    exportPath: testConfig.imagesDirectory,
+    name: "first",
+  });
   contest.next([{ id: "0", position: [2, 1] }]);
   await contest.export.imageFile({
     exportPath: testConfig.imagesDirectory,

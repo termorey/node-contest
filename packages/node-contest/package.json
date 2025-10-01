@@ -2,15 +2,15 @@
   "name": "@termorey/node-contest",
   "version": "0.3.2",
   "private": false,
+  "types": "module",
   "publishConfig": {
     "access": "public"
   },
   "description": "Instance for creation Contest events",
-  "main": "dist/index.js",
   "scripts": {
-    "dev": "ts-node -r tsconfig-paths/register index.ts",
-    "build": "tsc",
-    "ts": "ts-node",
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
     "test": "echo \"Error: no test specified\" && exit 1",
     "typecheck": "tsc --noEmit --project tsconfig.json",
     "format:apply": "prettier **/*.{ts,tsx,js,jsx} --write"
@@ -19,11 +19,11 @@
   "author": "termorey<https://github.com/termorey>",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^20.5.9",
+    "@types/node": "^24.6.1",
     "prettier": "catalog:",
-    "ts-node": "^10.9.1",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-dts": "^4.5.4"
   },
   "dependencies": {
     "canvas": "^2.11.2"
@@ -35,5 +35,12 @@
   "bugs": {
     "url": "https://github.com/termorey/node-contest/issues"
   },
-  "homepage": "https://github.com/termorey/node-contest#readme"
+  "homepage": "https://github.com/termorey/node-contest#readme",
+  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
 }

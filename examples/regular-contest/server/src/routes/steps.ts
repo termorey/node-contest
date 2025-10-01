@@ -1,4 +1,4 @@
-import type { Step } from "@termorey/node-contest";
+import type { Step } from "packages/node-contest/src/main";
 import express from "express";
 import { $contests } from "../services/contests";
 import { io } from "../index";

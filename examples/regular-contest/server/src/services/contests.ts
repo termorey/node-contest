@@ -1,5 +1,5 @@
-import type { Config, PrizeBank } from "@termorey/node-contest";
-import { Contest, ContestEvent } from "@termorey/node-contest";
+import type { Config, PrizeBank } from "packages/node-contest/src/main";
+import { Contest, ContestEvent } from "packages/node-contest/src/main";
 import { v4 as uuid } from "uuid";
 import {
   createApi,

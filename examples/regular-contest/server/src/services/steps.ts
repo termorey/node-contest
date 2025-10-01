@@ -1,4 +1,4 @@
-import type { Step } from "@termorey/node-contest";
+import type { Step } from "packages/node-contest/src/main";
 import { createApi, createEffect, createStore } from "effector";
 
 type NextStep = { contestId: string; step: Step };
