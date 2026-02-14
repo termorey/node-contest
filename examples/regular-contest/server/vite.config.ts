@@ -10,5 +10,5 @@ export default defineConfig({
       entry: resolve(__dirname, "./src/main.ts"),
     }),
   ],
-  server: { host: true },
+  server: { host: true, port: 4000 },
 });
