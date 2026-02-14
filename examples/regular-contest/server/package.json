@@ -17,7 +17,7 @@
     "@termorey/node-contest": "workspace:*",
     "effector": "^23.4.4",
     "hono": "^4.11.9",
-    "socket.io": "^4.7.2",
+    "socket.io": "^4.8.3",
     "uuid": "^13.0.0",
     "zod": "catalog:"
   },
