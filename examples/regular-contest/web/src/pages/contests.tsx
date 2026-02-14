@@ -1,4 +1,4 @@
-import { Container } from "shared/ui/container";
+import { Container } from "@/shared/ui/container";
 import { ContestsList } from "../widgets/contestsList";
 import { NavLink } from "react-router-dom";
 import { Button } from "../shared/ui/button";

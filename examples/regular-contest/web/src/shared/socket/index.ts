@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import { receivedUserId } from "shared/store/user.ts";
+import { receivedUserId } from "@/shared/store/user.ts";
 import { receivedContestInfo } from "../store/contest.ts";
 import { SOCKET_EVENT } from "./events.ts";
 

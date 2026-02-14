@@ -1,4 +1,4 @@
-import { Container } from "shared/ui/container";
+import { Container } from "@/shared/ui/container";
 import { ContestCreation } from "../widgets/contestCreation";
 
 export const CreationPage = () => {

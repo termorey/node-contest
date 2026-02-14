@@ -1,9 +1,9 @@
 import { createBrowserRouter, RouteObject } from "react-router-dom";
 import { App } from "./app.tsx";
-import { IndexPage } from "pages/index.tsx";
-import { ContestsPage } from "pages/contests.tsx";
-import { ContestPage } from "pages/contest.tsx";
-import { CreationPage } from "pages/creation.tsx";
+import { IndexPage } from "@/pages/index.tsx";
+import { ContestsPage } from "@/pages/contests.tsx";
+import { ContestPage } from "@/pages/contest.tsx";
+import { CreationPage } from "@/pages/creation.tsx";
 
 const routes: RouteObject[] = [
   {

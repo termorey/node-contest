@@ -3,8 +3,8 @@ import { cva } from "class-variance-authority";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { createEvent, sample } from "effector";
-import { Button } from "shared/ui/button";
-import { createContestFx } from "shared/store/contest.ts";
+import { Button } from "@/shared/ui/button";
+import { createContestFx } from "@/shared/store/contest.ts";
 import { useUnit } from "effector-react";
 
 export interface FormValues {

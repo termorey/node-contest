@@ -1,5 +1,5 @@
 import { createEvent, sample } from "effector";
-import { fetchContestsFx } from "shared/store/contests.ts";
+import { fetchContestsFx } from "@/shared/store/contests.ts";
 
 export const mounted = createEvent();
 

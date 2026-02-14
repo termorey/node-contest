@@ -5,8 +5,8 @@ import {
   createStore,
   sample,
 } from "effector";
-import { Api, ContestShortInfo } from "shared/api/api.ts";
-import { socket, SOCKET_EVENT } from "shared/socket";
+import { Api, ContestShortInfo } from "@/shared/api/api.ts";
+import { socket, SOCKET_EVENT } from "@/shared/socket";
 
 export const $contests = createStore<ContestShortInfo[]>([]);
 const contestsApi = createApi($contests, {

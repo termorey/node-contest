@@ -1,4 +1,4 @@
-import { Container } from "shared/ui/container";
+import { Container } from "@/shared/ui/container";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { createEvent, sample } from "effector";
@@ -8,10 +8,10 @@ import {
   fetchContestInfoFx,
   sendStepAndApplyFx,
   sendStepToMakeFx,
-} from "shared/store/contest.ts";
+} from "@/shared/store/contest.ts";
 import { useStore } from "effector-react";
-import { Button } from "shared/ui/button";
-import { Position } from "shared/api/api.ts";
+import { Button } from "@/shared/ui/button";
+import { Position } from "@/shared/api/api.ts";
 
 const contestRequested = createEvent<string>();
 sample({
