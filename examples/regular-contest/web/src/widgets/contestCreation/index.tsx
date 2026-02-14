@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { createEvent, sample } from "effector";
 import { Button } from "shared/ui/button";
-import { createContestFx } from "shared/store/contest";
+import { createContestFx } from "shared/store/contest/contest.ts";
 import { useUnit } from "effector-react";
 
 export interface FormValues {
