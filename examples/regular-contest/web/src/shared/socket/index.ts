@@ -5,7 +5,7 @@ import { SocketEvent } from "./events.ts";
 
 export const socket = io("ws://localhost:4000");
 socket.once("connect", () => {
-  receivedUserId(socket.id);
+  if (socket.id) receivedUserId(socket.id);
 });
 socket.on(SocketEvent.contestSteps, receivedContestInfo);
 
