@@ -8,7 +8,7 @@ import {
   fetchContestInfoFx,
   sendStepAndApplyFx,
   sendStepToMakeFx,
-} from "shared/store/contest/contest.ts";
+} from "shared/store/contest.ts";
 import { useStore } from "effector-react";
 import { Button } from "shared/ui/button";
 import { Position } from "shared/api/api.ts";

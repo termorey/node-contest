@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { cva } from "class-variance-authority";
 import { mounted } from "./model";
 import { useStore, useUnit } from "effector-react";
-import { $contests, fetchContestsFx } from "shared/store/contests/contests.ts";
+import { $contests, fetchContestsFx } from "shared/store/contests.ts";
 import { NavLink } from "react-router-dom";
 import { Button } from "shared/ui/button";
 

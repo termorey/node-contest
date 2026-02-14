@@ -6,7 +6,7 @@ import {
   sample,
 } from "effector";
 import { Api, Config, ContestInfo, Position } from "shared/api/api.ts";
-import { FormValues } from "../../../widgets/contestCreation";
+import { FormValues } from "../../widgets/contestCreation";
 
 export const $contest = createStore<null | ContestInfo>(null);
 const contestApi = createApi($contest, {

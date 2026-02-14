@@ -1,5 +1,5 @@
 import axios, { AxiosPromise } from "axios";
-import { $user } from "shared/store/user/user.ts";
+import { $user } from "shared/store/user.ts";
 
 const content = axios.create({
   baseURL: "http://localhost:4000/api/",

@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import { useStore } from "effector-react";
 import { Container } from "../shared/ui/container";
 import { Button } from "../shared/ui/button";
-import { $contests } from "../shared/store/contests/contests.ts";
+import { $contests } from "../shared/store/contests.ts";
 
 export const IndexPage = () => {
   const contests = useStore($contests);
