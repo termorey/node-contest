@@ -6,7 +6,7 @@ import {
   sample,
 } from "effector";
 import { Api, ContestShortInfo } from "shared/api/api.ts";
-import { socket, SocketEvent } from "shared/socket";
+import { socket, SOCKET_EVENT } from "shared/socket";
 
 export const $contests = createStore<ContestShortInfo[]>([]);
 const contestsApi = createApi($contests, {
@@ -32,10 +32,10 @@ export const fetchContestFx = createEffect(async (id: string) => {
   return [];
 });
 
-socket.on(SocketEvent.contestCreated, ({ id }) => {
+socket.on(SOCKET_EVENT.contestCreated, ({ id }) => {
   fetchContestFx(id).finally();
 });
-socket.on(SocketEvent.contestUpdated, (contest) => {
+socket.on(SOCKET_EVENT.contestUpdated, (contest) => {
   contestUpdated(contest);
 });
 

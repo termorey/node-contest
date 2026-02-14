@@ -3,7 +3,7 @@ import { z } from "zod";
 import { sValidator } from "@hono/standard-validator";
 import { $contests, ContestObj, createContestFx } from "@/services/contests";
 import { io } from "@/socket/socket.ts";
-import { SocketEvent } from "@/socket/events";
+import { SOCKET_EVENT } from "@/socket/events";
 
 export type ContestShortInfo = { id: string; img: Image };
 export type ContestInfo = {
@@ -95,7 +95,7 @@ export const contestRouter = new Hono()
       const { id } = await createContestFx({ config, prizes });
       const responseData = { id };
       console.log(`Created contest id:${id}`);
-      io.emit(SocketEvent.contestCreated, responseData);
+      io.emit(SOCKET_EVENT.contestCreated, responseData);
       return ctx.json(responseData, 200);
     },
   )

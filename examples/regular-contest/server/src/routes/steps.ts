@@ -4,7 +4,7 @@ import { z } from "zod";
 import type { Step } from "@termorey/node-contest";
 import { $contests } from "@/services/contests";
 import { io } from "@/socket/socket.ts";
-import { SocketEvent } from "@/socket/events";
+import { SOCKET_EVENT } from "@/socket/events";
 import { createContestInfo, createContestShortInfo } from "./contest";
 import {
   $stepsQueue,
@@ -55,8 +55,8 @@ export const stepsRouter = new Hono()
       await clearContestStepsQueue(contestId);
       const contestInfo = await createContestInfo(contest);
       const contestShortInfo = await createContestShortInfo(contest);
-      io.emit(SocketEvent.contestSteps, contestInfo);
-      io.emit(SocketEvent.contestUpdated, contestShortInfo);
+      io.emit(SOCKET_EVENT.contestSteps, contestInfo);
+      io.emit(SOCKET_EVENT.contestUpdated, contestShortInfo);
       if (resolved.length > 0) return ctx.json(createStepAnswer(true), 200);
       return ctx.json(createStepAnswer(true), 200);
     },
@@ -77,8 +77,8 @@ export const stepsRouter = new Hono()
       ]);
       const contestInfo = await createContestInfo(contest);
       const contestShortInfo = await createContestShortInfo(contest);
-      io.emit(SocketEvent.contestSteps, contestInfo);
-      io.emit(SocketEvent.contestUpdated, contestShortInfo);
+      io.emit(SOCKET_EVENT.contestSteps, contestInfo);
+      io.emit(SOCKET_EVENT.contestUpdated, contestShortInfo);
       if (resolved.length > 0) return ctx.json(createStepAnswer(true), 200);
       return ctx.json(createStepAnswer(true), 200);
     },
