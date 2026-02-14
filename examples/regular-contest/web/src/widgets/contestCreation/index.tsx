@@ -1,7 +1,7 @@
 import React from "react";
 import { cva } from "class-variance-authority";
 import { useFormik } from "formik";
-import * as yup from "yup";
+import { z } from "zod";
 import { createEvent, sample } from "effector";
 import { Button } from "@/shared/ui/button";
 import { createContestFx } from "@/shared/store/contest.ts";
@@ -21,17 +21,11 @@ const initialValues: FormValues = {
   fieldsCountY: 3,
 };
 
-const validationSchema = yup.object({
-  fieldSizeX: yup.number().required().min(300, "Размер X меньше 300px"),
-  fieldSizeY: yup.number().required().min(300, "Размер Y меньше 300px"),
-  fieldsCountX: yup
-    .number()
-    .required()
-    .min(3, "Не может быть менее 3 чанков в ширину"),
-  fieldsCountY: yup
-    .number()
-    .required()
-    .min(3, "Не может быть менее 3 чанков в высоту"),
+const validationSchema = z.object({
+  fieldSizeX: z.number().min(300, "Размер X меньше 300px"),
+  fieldSizeY: z.number().min(300, "Размер Y меньше 300px"),
+  fieldsCountX: z.number().min(3, "Не может быть менее 3 чанков в ширину"),
+  fieldsCountY: z.number().min(3, "Не может быть менее 3 чанков в высоту"),
 });
 
 const formSubmitted = createEvent<FormValues>();
