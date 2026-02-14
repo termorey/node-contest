@@ -13,7 +13,7 @@
     "format:apply": "prettier **/*.{ts,tsx,js,jsx} --write"
   },
   "dependencies": {
-    "@hono/zod-validator": "^0.7.3",
+    "@hono/zod-validator": "^0.7.6",
     "@termorey/node-contest": "workspace:*",
     "effector": "^23.4.4",
     "hono": "^4.11.9",
