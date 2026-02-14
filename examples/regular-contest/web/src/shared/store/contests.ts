@@ -22,13 +22,13 @@ const contestsApi = createApi($contests, {
 
 const contestUpdated = createEvent<ContestShortInfo>();
 export const fetchContestsFx = createEffect(async () => {
-  const result = await Api.contests.getAll();
-  if (result.status === 200) return result.data;
+  const result = await Api.contests.getAll({});
+  if (result.status === 200) return result.json();
   return [];
 });
 export const fetchContestFx = createEffect(async (id: string) => {
-  const result = await Api.contests.getAllById(id);
-  if (result.status === 200) return result.data;
+  const result = await Api.contests.getAllById({ params: { contestId: id } });
+  if (result.status === 200) return result.json();
   return [];
 });
 
