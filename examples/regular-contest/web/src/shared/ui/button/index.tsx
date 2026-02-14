@@ -13,7 +13,7 @@ const button = cva("button", {
         "bg-blue-600 hover:bg-blue-500",
         "text-white",
         "px-2",
-        "rounded",
+        "rounded-sm",
       ],
     },
   },

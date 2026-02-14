@@ -36,7 +36,7 @@ export const ContestsList: React.FC<Props> = () => {
           <div
             key={id}
             className={
-              "flex flex-col justify-end items-stretch bg-white rounded drop-shadow overflow-hidden"
+              "flex flex-col justify-end items-stretch bg-white rounded-sm drop-shadow-sm overflow-hidden"
             }
           >
             {img ? <img src={img} alt={""} className={"aspect-video"} /> : null}

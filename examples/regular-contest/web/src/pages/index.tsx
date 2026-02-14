@@ -18,7 +18,7 @@ export const IndexPage = () => {
         <NavLink to={"/contests"}>
           <div
             className={
-              "flex flex-row justify-start items-stretch gap-2 bg-white p-2 drop-shadow"
+              "flex flex-row justify-start items-stretch gap-2 bg-white p-2 drop-shadow-sm"
             }
           >
             <span>{`Total contests: ${contests.length}`}</span>

@@ -127,7 +127,7 @@ export const Description: React.FC<React.PropsWithChildren> = ({
 }) => <p>{children}</p>;
 
 const input = cva(
-  "bg-gray-50 py-1 px-2 focus:bg-gray-100 focus:drop-shadow focus:outline-0",
+  "bg-gray-50 py-1 px-2 focus:bg-gray-100 focus:drop-shadow-sm focus:outline-0",
 );
 export const NumberInput: React.FC<{
   name: string;
