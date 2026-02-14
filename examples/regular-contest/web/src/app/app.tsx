@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { Menu } from "./widgets/menu";
+import { Menu } from "../widgets/menu";
 
 export const App: React.FC = () => {
   return (
