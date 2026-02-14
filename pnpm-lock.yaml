@@ -6,23 +6,17 @@ settings:
 
 catalogs:
   default:
-    prettier:
-      specifier: 3.6.2
-      version: 3.6.2
-    typescript:
-      specifier: 5.9.3
-      version: 5.9.3
-    vite:
-      specifier: ^7.1.7
-      version: 7.1.7
+    zod:
+      specifier: ^4.1.11
+      version: 4.3.6
 
 importers:
 
   examples/regular-contest/server:
     dependencies:
-      '@hono/zod-validator':
-        specifier: ^0.7.6
-        version: 0.7.6(hono@4.11.9)(zod@4.3.6)
+      '@hono/standard-validator':
+        specifier: ^0.2.2
+        version: 0.2.2(@standard-schema/spec@1.1.0)(hono@4.11.9)
       '@termorey/node-contest':
         specifier: workspace:*
         version: link:../../../packages/node-contest
@@ -500,6 +494,12 @@ packages:
     peerDependencies:
       hono: ^4
 
+  '@hono/standard-validator@0.2.2':
+    resolution: {integrity: sha512-mJ7W84Bt/rSvoIl63Ynew+UZOHAzzRAoAXb3JaWuxAkM/Lzg+ZHTCUiz77KOtn2e623WNN8LkD57Dk0szqUrIw==}
+    peerDependencies:
+      '@standard-schema/spec': ^1.0.0
+      hono: '>=3.9.0'
+
   '@hono/vite-dev-server@0.25.0':
     resolution: {integrity: sha512-4j5rs7yUTOObU2/yCEHeWbf3C8m95SD9lhdUUE6CJ462Emp9vS94yiza2dsA8+ly5pdaIQW0cd4nhNVcwYL5tA==}
     engines: {node: '>=18.14.1'}
@@ -512,12 +512,6 @@ packages:
         optional: true
       wrangler:
         optional: true
-
-  '@hono/zod-validator@0.7.6':
-    resolution: {integrity: sha512-Io1B6d011Gj1KknV4rXYz4le5+5EubcWEU/speUjuw9XMMIaP3n78yXLhjd2A3PXaXaUwEAluOiAyLqhBEJgsw==}
-    peerDependencies:
-      hono: '>=3.9.0'
-      zod: ^3.25.0 || ^4.0.0
 
   '@humanwhocodes/config-array@0.13.0':
     resolution: {integrity: sha512-DZLEEqFWQFiyK6h5YIeynKx7JlvCYWL0cImfSRXZ9l4Sg2efkFGTuFf6vzXjK1cq6IYkU+Eg/JizXw+TD2vRNw==}
@@ -755,6 +749,9 @@ packages:
 
   '@socket.io/component-emitter@3.1.0':
     resolution: {integrity: sha512-+9jVqKhRSpsc591z5vX+X5Yyw+he/HCB4iQ/RYxw35CEPaY1gnsNE43nf9n9AaYjAQrTiI/mOwKUKdUs9vf7Xg==}
+
+  '@standard-schema/spec@1.1.0':
+    resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
   '@swc/core-darwin-arm64@1.13.5':
     resolution: {integrity: sha512-lKNv7SujeXvKn16gvQqUQI5DdyY8v7xcoO3k06/FJbHJS90zEwZdQiMNRiqpYw/orU543tPaWgz7cIYWhbopiQ==}
@@ -2748,16 +2745,16 @@ snapshots:
     dependencies:
       hono: 4.11.9
 
+  '@hono/standard-validator@0.2.2(@standard-schema/spec@1.1.0)(hono@4.11.9)':
+    dependencies:
+      '@standard-schema/spec': 1.1.0
+      hono: 4.11.9
+
   '@hono/vite-dev-server@0.25.0(hono@4.11.9)':
     dependencies:
       '@hono/node-server': 1.19.9(hono@4.11.9)
       hono: 4.11.9
       minimatch: 9.0.5
-
-  '@hono/zod-validator@0.7.6(hono@4.11.9)(zod@4.3.6)':
-    dependencies:
-      hono: 4.11.9
-      zod: 4.3.6
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
@@ -2968,6 +2965,8 @@ snapshots:
       - '@types/node'
 
   '@socket.io/component-emitter@3.1.0': {}
+
+  '@standard-schema/spec@1.1.0': {}
 
   '@swc/core-darwin-arm64@1.13.5':
     optional: true

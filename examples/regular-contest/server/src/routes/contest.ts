@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { z } from "zod";
-import { zValidator } from "@hono/zod-validator";
+import { sValidator } from "@hono/standard-validator";
 import { $contests, ContestObj, createContestFx } from "@/services/contests";
 import { io } from "@/socket/socket.ts";
 import { SocketEvent } from "@/socket/events";
@@ -60,7 +60,7 @@ export const contestRouter = new Hono()
   })
   .post(
     "/create",
-    zValidator(
+    sValidator(
       "json",
       z.object({
         fieldSize: z
@@ -101,7 +101,7 @@ export const contestRouter = new Hono()
   )
   .get(
     "/id/:id",
-    zValidator("param", z.object({ id: z.string() })),
+    sValidator("param", z.object({ id: z.string() })),
     async (ctx) => {
       const params = ctx.req.valid("param");
       const list = $contests.getState().list;
@@ -113,7 +113,7 @@ export const contestRouter = new Hono()
   )
   .get(
     "/by-id/:id",
-    zValidator("param", z.object({ id: z.string() })),
+    sValidator("param", z.object({ id: z.string() })),
     async (ctx) => {
       const params = ctx.req.valid("param");
       const list = $contests.getState().list;

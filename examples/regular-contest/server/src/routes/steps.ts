@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { zValidator } from "@hono/zod-validator";
+import { sValidator } from "@hono/standard-validator";
 import { z } from "zod";
 import type { Step } from "@termorey/node-contest";
 import { $contests } from "@/services/contests";
@@ -24,7 +24,7 @@ const filterSteps: (steps: Step[]) => Step[] = (steps) =>
 export const stepsRouter = new Hono()
   .post(
     "/make",
-    zValidator("json", z.custom<NextStep>().optional()),
+    sValidator("json", z.custom<NextStep>().optional()),
     async (ctx) => {
       const body = ctx.req.valid("json");
       if (!body) return ctx.json(createStepAnswer(false), 200);
@@ -34,7 +34,7 @@ export const stepsRouter = new Hono()
   )
   .post(
     "/apply",
-    zValidator("json", z.object({ contestId: z.string() }).optional()),
+    sValidator("json", z.object({ contestId: z.string() }).optional()),
     async (ctx) => {
       const body = ctx.req.valid("json");
       if (!body) return ctx.json(createStepAnswer(false), 200);
@@ -63,7 +63,7 @@ export const stepsRouter = new Hono()
   )
   .post(
     "/make-and-apply",
-    zValidator("json", z.custom<NextStep>().optional()),
+    sValidator("json", z.custom<NextStep>().optional()),
     async (ctx) => {
       const body = ctx.req.valid("json");
       if (!body) return ctx.json(createStepAnswer(false), 200);
