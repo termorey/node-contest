@@ -1,9 +1,9 @@
 import { createEvent, sample } from "effector";
-import { fetchContestsFx } from "shared/store/contests";
+import { fetchContestsFx } from "@/shared/store/contests.ts";
 
 export const mounted = createEvent();
 
 sample({
-	clock: mounted,
-	target: fetchContestsFx,
-})
+  clock: mounted,
+  target: fetchContestsFx,
+});

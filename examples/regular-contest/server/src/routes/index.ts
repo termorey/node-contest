@@ -1,8 +1,7 @@
-import express from "express";
+import { Hono } from "hono";
 import { contestRouter } from "./contest";
 import { stepsRouter } from "./steps";
 
-export const router = express.Router();
-
-router.use("/contests", contestRouter);
-router.use("/steps", stepsRouter);
+export const routes = new Hono()
+  .route("/contests", contestRouter)
+  .route("/steps", stepsRouter);

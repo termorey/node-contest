@@ -1,12 +1,12 @@
-import {io} from "socket.io-client"
-import { receivedUserId } from "shared/store/user";
-import { receivedContestInfo } from "../store/contest";
-import { SocketEvent } from "./events.ts";
+import { io } from "socket.io-client";
+import { receivedUserId } from "@/shared/store/user.ts";
+import { receivedContestInfo } from "../store/contest.ts";
+import { SOCKET_EVENT } from "./events.ts";
 
 export const socket = io("ws://localhost:4000");
-socket.once('connect', () => {
-	receivedUserId(socket.id);
-})
-socket.on(SocketEvent.contestSteps, receivedContestInfo);
+socket.once("connect", () => {
+  if (socket.id) receivedUserId(socket.id);
+});
+socket.on(SOCKET_EVENT.contestSteps, receivedContestInfo);
 
-export { SocketEvent } from "./events.ts";
+export { SOCKET_EVENT } from "./events.ts";
