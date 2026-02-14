@@ -8,28 +8,28 @@ import { CreationPage } from "pages/creation.tsx";
 const routes: RouteObject[] = [
   {
     path: "/",
-    element: <App />,
+    Component: App,
     children: [
       {
         index: true,
         path: "",
-        element: <IndexPage />,
+        Component: IndexPage,
       },
       {
         path: "contests",
-        element: <ContestsPage />,
+        Component: ContestsPage,
       },
       {
         path: "contests/new",
-        element: <CreationPage />,
+        Component: CreationPage,
       },
       {
         path: "contests/:contestId",
-        element: <ContestPage />,
+        Component: ContestPage,
       },
       {
         path: "*",
-        element: <IndexPage />,
+        Component: IndexPage,
       },
     ],
   },
