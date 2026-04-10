@@ -1,5 +1,5 @@
 /// <reference types="vitest" />
-import * as path from "node:path";
+import { resolve } from "node:path";
 import { defineConfig } from "vite";
 import dtsPlugin from "vite-plugin-dts";
 
@@ -7,11 +7,11 @@ export default defineConfig({
   plugins: [dtsPlugin()],
   build: {
     lib: {
-      entry: path.resolve(__dirname, "src/export.ts"),
+      entry: resolve(__dirname, "src/export.ts"),
       formats: ["es"],
       fileName: "index",
     },
-    rollupOptions: {
+    rolldownOptions: {
       external: [/^node:/],
     },
   },
