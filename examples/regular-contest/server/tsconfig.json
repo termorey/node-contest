@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "types": ["*"],
+    "rootDirs": ["."],
+
     "target": "es2022",
     "useDefineForClassFields": true,
     "module": "esnext",
@@ -21,7 +24,6 @@
     "noUncheckedSideEffectImports": true,
 
     /* Paths */
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
