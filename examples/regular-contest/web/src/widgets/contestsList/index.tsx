@@ -3,7 +3,7 @@ import { cva } from "class-variance-authority";
 import { mounted } from "./model";
 import { useStore, useUnit } from "effector-react";
 import { $contests, fetchContestsFx } from "@/shared/store/contests.ts";
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router";
 import { Button } from "@/shared/ui/button";
 
 interface Props {}

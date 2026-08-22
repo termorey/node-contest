@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router";
 import { useStore } from "effector-react";
 import { Container } from "../shared/ui/container";
 import { Button } from "../shared/ui/button";

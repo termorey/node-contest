@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router";
 import { cva } from "class-variance-authority";
 
 export const Menu = () => (

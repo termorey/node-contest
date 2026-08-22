@@ -1,5 +1,5 @@
 import { Container } from "@/shared/ui/container";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { useEffect } from "react";
 import { createEvent, sample } from "effector";
 import {

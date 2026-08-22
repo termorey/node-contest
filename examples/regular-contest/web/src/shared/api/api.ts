@@ -2,7 +2,7 @@ import ky, { type ResponsePromise, type Options } from "ky";
 import { $user } from "@/shared/store/user.ts";
 
 const content = ky.create({
-  prefixUrl: "http://localhost:4000/api/",
+  prefix: "http://localhost:4000/api",
 });
 
 export const Api: {

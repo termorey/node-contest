@@ -1,6 +1,6 @@
 import { Container } from "@/shared/ui/container";
 import { ContestsList } from "../widgets/contestsList";
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router";
 import { Button } from "../shared/ui/button";
 
 export const ContestsPage = () => {

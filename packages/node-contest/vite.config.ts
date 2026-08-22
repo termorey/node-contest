@@ -18,5 +18,5 @@ export default defineConfig({
   test: {
     projects: ["src/**/*.{test}.{ts,tsx}"],
   },
-  resolve: { tsConfigPaths: true },
+  resolve: { tsconfigPaths: true },
 });
