@@ -1,4 +1,3 @@
-import { v4 as uuid } from "uuid";
 import {
   createApi,
   createEffect,
@@ -63,7 +62,7 @@ export const createContestFx = createEffect(
     config: Omit<Config, "bank">;
     prizes: PrizeObj[];
   }) => {
-    const id = uuid();
+    const id = globalThis.crypto.randomUUID();
     const transformPrizes: (prizesList: PrizeObj[]) => PrizeBank = (prizes) => {
       return Object.values(prizes).map(({ id, totalCount }) => ({
         info: { id },

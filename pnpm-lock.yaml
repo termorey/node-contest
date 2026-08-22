@@ -30,8 +30,8 @@ importers:
   examples/regular-contest/server:
     dependencies:
       '@hono/standard-validator':
-        specifier: ^0.2.2
-        version: 0.2.2(@standard-schema/spec@1.1.0)(hono@4.12.12)
+        specifier: 0.4.0
+        version: 0.4.0(@standard-schema/spec@1.1.0)(hono@4.13.3)
       '@termorey/node-contest':
         specifier: workspace:*
         version: link:../../../packages/node-contest
@@ -39,27 +39,21 @@ importers:
         specifier: ^23.4.4
         version: 23.4.4
       hono:
-        specifier: ^4.12.12
-        version: 4.12.12
+        specifier: 4.13.3
+        version: 4.13.3
       socket.io:
         specifier: ^4.8.3
         version: 4.8.3(supports-color@8.1.1)
-      uuid:
-        specifier: ^13.0.0
-        version: 13.0.0
       zod:
         specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
       '@hono/vite-dev-server':
-        specifier: ^0.25.1
-        version: 0.25.1(hono@4.12.12)
+        specifier: 0.26.1
+        version: 0.26.1(hono@4.13.3)
       '@types/node':
         specifier: ^24.6.1
         version: 24.6.1
-      '@types/uuid':
-        specifier: ^11.0.0
-        version: 11.0.0
       oxfmt:
         specifier: 'catalog:'
         version: 0.64.0
@@ -324,20 +318,20 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@hono/node-server@1.19.13':
-    resolution: {integrity: sha512-TsQLe4i2gvoTtrHje625ngThGBySOgSK3Xo2XRYOdqGN1teR8+I7vchQC46uLJi8OF62YTYA3AhSpumtkhsaKQ==}
+  '@hono/node-server@1.19.17':
+    resolution: {integrity: sha512-dSneS5qhiauZWGDCeK4o695Xd9nUNjviSZCMQrj10eetr8Uln1ucn6bbphOM6UynAMMtNIzZNSpL9vnASJwrPQ==}
     engines: {node: '>=18.14.1'}
     peerDependencies:
       hono: ^4
 
-  '@hono/standard-validator@0.2.2':
-    resolution: {integrity: sha512-mJ7W84Bt/rSvoIl63Ynew+UZOHAzzRAoAXb3JaWuxAkM/Lzg+ZHTCUiz77KOtn2e623WNN8LkD57Dk0szqUrIw==}
+  '@hono/standard-validator@0.4.0':
+    resolution: {integrity: sha512-MxOm1asDh9j7c1D0KiWwppSbFgAQxTRO4YEhjMrJn3lF1BIcXenPdgjSGKDRfQmZdaTaMA8slQLETgVOKyJxFw==}
     peerDependencies:
       '@standard-schema/spec': ^1.0.0
-      hono: '>=3.9.0'
+      hono: '>=4.11.2'
 
-  '@hono/vite-dev-server@0.25.1':
-    resolution: {integrity: sha512-H6EqoPtCV+uH1fu8nKyRy5Wh3LU012QxloEYMlUcyMjjEfVFiRXPjHx/0TQiiRi140Vu8San5A4XQWyElKFKaw==}
+  '@hono/vite-dev-server@0.26.1':
+    resolution: {integrity: sha512-OlcWoXjNogKiJhVwV/ftMK87UcsJmIBfmImSdI4e8to/ZdwNHrW9ddKw2OGHjXI5/uS2RaZr+2y+l8T9VFbCmw==}
     engines: {node: '>=18.14.1'}
     peerDependencies:
       hono: '*'
@@ -1113,10 +1107,6 @@ packages:
   '@types/react@18.3.25':
     resolution: {integrity: sha512-oSVZmGtDPmRZtVDqvdKUi/qgCsWp5IDY29wp8na8Bj4B3cc99hfNzvNhlMkVVxctkAOGUA3Km7MMpBHAnWfcIA==}
 
-  '@types/uuid@11.0.0':
-    resolution: {integrity: sha512-HVyk8nj2m+jcFRNazzqyVKiZezyhDKrGUA3jlEcg/nZ6Ms+qHwocba1Y/AaVaznJTAM9xpdFSh+ptbNrhOGvZA==}
-    deprecated: This is a stub types definition. uuid provides its own type definitions, so you do not need this installed.
-
   '@typescript/typescript-aix-ppc64@7.0.2':
     resolution: {integrity: sha512-MTKKkWB7p/0E9xi1d1tHtZ5PiLkGEMIq88pK2CubZjOsLtYTLqhgIgi6zepFa+9GHZ6h05NMCkQxGKiPXMxXtQ==}
     engines: {node: '>=16.20.0'}
@@ -1340,8 +1330,8 @@ packages:
   bl@4.1.0:
     resolution: {integrity: sha512-1W07cM9gS6DcLperZfFSj+bWLtaPGSOHWhPiGzXmvVJbRLdG82sH/Kn8EtW1VqWVA54AKf2h5k5BbnIbwF3h6w==}
 
-  brace-expansion@2.0.2:
-    resolution: {integrity: sha512-Jt0vHyM+jmUBqojB7E1NIYadt0vI0Qxjxd2TErW94wDz+E2LAm5vKMXXwg6ZZBTHPuUlDgQHKXvjGBdfcF1ZDQ==}
+  brace-expansion@2.1.4:
+    resolution: {integrity: sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==}
 
   buffer@5.7.1:
     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}
@@ -1532,8 +1522,8 @@ packages:
   hoist-non-react-statics@3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
 
-  hono@4.12.12:
-    resolution: {integrity: sha512-p1JfQMKaceuCbpJKAPKVqyqviZdS0eUxH9v82oWo1kb9xjQ5wA6iP3FNVAPDFlz5/p7d45lO+BpSk1tuSZMF4Q==}
+  hono@4.13.3:
+    resolution: {integrity: sha512-r8AO2mYHoLxSHkgafNeC/BXyb2vWRxD3jem4Ts+ptav8oTG5FIRifAjuJEmZI4bSvvc2ns0GxmIYiZnHqN3mMw==}
     engines: {node: '>=16.9.0'}
 
   ieee754@1.2.1:
@@ -1764,8 +1754,8 @@ packages:
     resolution: {integrity: sha512-fu656aJ0n2kcXwsnwnv9g24tkU5uSmOlTjd6WyyaKm2Z+h1qmY6bAjrcaIxF/BslFqbZ8UBtbJi7KgQOZD2PTw==}
     engines: {node: 20 || >=22}
 
-  minimatch@9.0.5:
-    resolution: {integrity: sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==}
+  minimatch@9.0.9:
+    resolution: {integrity: sha512-OBwBN9AL4dqmETlpS2zasx+vTeWclWzkblfZk7KTA5j3jeOONz/tRCnZomUyvNg83wL5Zv9Ss6HMJXAgL8R2Yg==}
     engines: {node: '>=16 || 14 >=14.17'}
 
   minimist@1.2.8:
@@ -2148,10 +2138,6 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  uuid@13.0.0:
-    resolution: {integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==}
-    hasBin: true
-
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
@@ -2370,20 +2356,20 @@ snapshots:
   '@esbuild/win32-x64@0.27.3':
     optional: true
 
-  '@hono/node-server@1.19.13(hono@4.12.12)':
+  '@hono/node-server@1.19.17(hono@4.13.3)':
     dependencies:
-      hono: 4.12.12
+      hono: 4.13.3
 
-  '@hono/standard-validator@0.2.2(@standard-schema/spec@1.1.0)(hono@4.12.12)':
+  '@hono/standard-validator@0.4.0(@standard-schema/spec@1.1.0)(hono@4.13.3)':
     dependencies:
       '@standard-schema/spec': 1.1.0
-      hono: 4.12.12
+      hono: 4.13.3
 
-  '@hono/vite-dev-server@0.25.1(hono@4.12.12)':
+  '@hono/vite-dev-server@0.26.1(hono@4.13.3)':
     dependencies:
-      '@hono/node-server': 1.19.13(hono@4.12.12)
-      hono: 4.12.12
-      minimatch: 9.0.5
+      '@hono/node-server': 1.19.17(hono@4.13.3)
+      hono: 4.13.3
+      minimatch: 9.0.9
 
   '@isaacs/balanced-match@4.0.1':
     optional: true
@@ -2900,10 +2886,6 @@ snapshots:
       '@types/prop-types': 15.7.15
       csstype: 3.1.3
 
-  '@types/uuid@11.0.0':
-    dependencies:
-      uuid: 13.0.0
-
   '@typescript/typescript-aix-ppc64@7.0.2':
     optional: true
 
@@ -3083,7 +3065,7 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
-  brace-expansion@2.0.2:
+  brace-expansion@2.1.4:
     dependencies:
       balanced-match: 1.0.2
 
@@ -3294,7 +3276,7 @@ snapshots:
     dependencies:
       react-is: 16.13.1
 
-  hono@4.12.12: {}
+  hono@4.13.3: {}
 
   ieee754@1.2.1: {}
 
@@ -3468,9 +3450,9 @@ snapshots:
       '@isaacs/brace-expansion': 5.0.1
     optional: true
 
-  minimatch@9.0.5:
+  minimatch@9.0.9:
     dependencies:
-      brace-expansion: 2.0.2
+      brace-expansion: 2.1.4
 
   minimist@1.2.8: {}
 
@@ -3936,8 +3918,6 @@ snapshots:
       react: 18.3.1
 
   util-deprecate@1.0.2: {}
-
-  uuid@13.0.0: {}
 
   vary@1.1.2: {}
 
