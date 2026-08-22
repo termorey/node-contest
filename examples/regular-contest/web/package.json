@@ -15,7 +15,7 @@
     "class-variance-authority": "^0.7.0",
     "effector": "^23.4.4",
     "effector-react": "^23.3.0",
-    "formik": "^2.4.9",
+    "formik": "2.4.9",
     "ky": "2.0.2",
     "react": "19.2.8",
     "react-dom": "19.2.8",
