@@ -3,7 +3,14 @@ packages:
   - ./packages/*
 
 catalog:
-  prettier: 3.6.2
-  typescript: 6.0.2
-  vite: 8.0.8
-  zod: ^4.3.6
+  oxlint: 1.79.0
+  oxfmt: 0.64.0
+  typescript: 7.0.2
+  vite: 8.2.2
+  zod: 4.3.6
+  '@typescript/typescript6': 6.0.2
+
+allowBuilds:
+  '@swc/core': true
+  canvas: true
+  esbuild: true

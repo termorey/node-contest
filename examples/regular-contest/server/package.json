@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc --noEmit --project tsconfig.json",
-    "format:apply": "prettier **/*.{ts,tsx,js,jsx} --write"
+    "format:apply": "oxfmt"
   },
   "dependencies": {
     "@hono/standard-validator": "^0.2.2",
@@ -25,9 +25,8 @@
     "@hono/vite-dev-server": "^0.25.1",
     "@types/node": "^24.6.1",
     "@types/uuid": "^11.0.0",
-    "prettier": "catalog:",
+    "oxfmt": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:",
-    "vite-tsconfig-paths": "^6.1.1"
+    "vite": "catalog:"
   }
 }
