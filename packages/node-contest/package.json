@@ -24,9 +24,9 @@
     "@typescript/typescript6": "catalog:",
     "oxfmt": "catalog:",
     "typescript": "catalog:",
-    "unplugin-dts": "1.0.3",
+    "unplugin-dts": "1.1.2",
     "vite": "catalog:",
-    "vitest": "^4.1.4"
+    "vitest": "^5.0.5"
   },
   "dependencies": {
     "canvas": "^3.2.0"
